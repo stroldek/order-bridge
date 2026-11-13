@@ -1,19 +1,20 @@
 # Order Bridge
 
-Stage 2 — GOST source connector (v0.2.0)
+Stage 2 — GOST source connector (v0.2.1)
 
 ## What changed
 - The extension UI is now a real Chrome toolbar popup (popup.html), not a tab opened by the extension.
 - Uses one familiar ghost emoji (👻) in every state, with state-specific motion/marks.
 - Watches GOST's authenticated order-list requests in the page's MAIN world.
-- Keeps the observed Bearer value inside the GOST page context only; it is not sent to the extension, persisted, logged, or uploaded.
+- Keeps the observed Bearer value inside the GOST page context only; it is not sent to the extension, persisted, logged, or uploaded. Disconnect pauses monitoring but retains that value only in the same page's memory so reconnect can resume without a reload.
 - Captures the GOST order list, marks existing IDs as historical on first connection, then checks for new orders every 120 seconds.
 - Fetches order detail JSON from the Next.js data endpoint for each new order.
 - Normalizes nested sub-orders and product arrays.
 - Stores only order IDs, operational metadata, and product summaries locally. Buyer name, phone, email, address, comments, and the raw full payload are not persisted.
 - Performs a full list refresh periodically to reconcile payment/status updates.
+- Calculates today's `total_price` against the fixed `Europe/Kyiv` calendar date and de-duplicates orders by ID to avoid double-counting overlapping pages.
 
-## Automated build\n\nEvery push to main validates the manifest and JavaScript, runs the normalizer tests, and uploads an installable ZIP artifact named order-bridge-v0.2.0 to the GitHub Actions run (30-day retention).\n\n## Install
+## Automated build\n\nEvery push to main validates the manifest and JavaScript, runs the normalizer tests, and uploads an installable ZIP artifact named order-bridge-v0.2.1 to the GitHub Actions run (30-day retention).\n\n## Install
 1. Download the repository ZIP from GitHub and extract it.
 2. Open chrome://extensions.
 3. Enable Developer mode.
