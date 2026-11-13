@@ -1,11 +1,12 @@
 :root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color-scheme:dark;--bg:#101914;--panel:#18251e;--panel2:#1d2c23;--line:#304237;--text:#edf4ee;--muted:#a1b2a6;--accent:#d9ed62;--accentText:#172016;--soft:#26392d}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);transition:background .2s,color .2s}
-body.light{color-scheme:light;--bg:#f4f7f2;--panel:#fff;--panel2:#f8faf6;--line:#dce5db;--text:#17241b;--muted:#647568;--accent:#c5df43;--accentText:#172016;--soft:#edf3e8}
+body.light{color-scheme:light;--bg:#e3eae2;--panel:#eef3ec;--panel2:#d8e2d7;--line:#adbdad;--text:#1a291e;--muted:#4f6154;--accent:#bfd83d;--accentText:#1a2514;--soft:#d0dfd0}
 .app{max-width:1120px;margin:auto;padding:0 34px}
 .topbar{height:86px;display:flex;align-items:center;border-bottom:1px solid var(--line);gap:28px}
-.brand{display:flex;align-items:center;gap:10px;font-weight:750;letter-spacing:-.4px;text-transform:lowercase;white-space:nowrap}
-.brand-mark{display:grid;place-items:center;width:32px;height:32px;border-radius:10px;background:var(--accent);color:var(--accentText);font-weight:900}
+.brand{display:flex;align-items:center;gap:8px;white-space:nowrap;flex:0 0 auto}
+.brand-logo-shell{display:flex;align-items:center;justify-content:center;background:#080d0a;border:1px solid #253329;border-radius:10px;padding:2px 6px;line-height:0;box-shadow:0 2px 7px rgba(0,0,0,.14)}
+.brand-logo{display:block;width:150px;height:auto;max-height:72px;object-fit:contain}
 .version{font-size:11px;color:var(--muted);font-weight:500}
 .tabs{display:flex;gap:5px;margin:auto}
 .tab,.theme,.subtle{border:0;background:transparent;color:var(--muted);cursor:pointer}
@@ -70,10 +71,11 @@ footer span{padding:0 5px}
 /* Actual Chrome toolbar popup: wide, balanced workspace window. */
 .popup-app{width:680px;min-width:680px;max-width:680px;height:580px;min-height:580px;max-height:580px;overflow:hidden;background:var(--bg)}
 .popup-app .app{width:100%;height:580px;max-width:none;margin:0;padding:0 18px;display:flex;flex-direction:column}
-.popup-app .topbar{height:66px;min-height:66px;flex:0 0 66px;padding:0;display:flex;align-items:center;gap:16px}
-.popup-app .brand{gap:8px;font-size:13px}
-.popup-app .brand-mark{width:30px;height:30px;border-radius:9px}
-.popup-app .version{font-size:10px}
+.popup-app .topbar{height:72px;min-height:72px;flex:0 0 72px;padding:0;display:flex;align-items:center;gap:10px}
+.popup-app .brand{gap:6px;font-size:13px}
+.popup-app .brand-logo-shell{padding:2px 5px;border-radius:9px}
+.popup-app .brand-logo{width:128px;max-height:62px}
+.popup-app .version{font-size:9px}
 .popup-app .tabs{display:flex;align-items:center;gap:4px;margin:0 0 0 auto;flex:0 0 auto}
 .popup-app .tab{padding:9px 11px;font-size:11px;white-space:nowrap}
 .popup-app .theme{width:32px;height:32px;flex:0 0 32px;font-size:16px}
@@ -140,3 +142,12 @@ footer span{padding:0 5px}
 .popup-app footer{height:29px;min-height:29px;flex:0 0 29px;padding:8px 0 9px;font-size:8px}
 .popup-app [hidden]{display:none!important}
 @media(max-width:640px){.popup-app{width:100vw;min-width:0;max-width:100vw}.popup-app .app{padding:0 12px}.popup-app .topbar{gap:8px}.popup-app .brand{gap:5px}.popup-app .brand .version{display:none}.popup-app .tab{padding:8px 6px;font-size:10px}.popup-app .dashboard-columns{grid-template-columns:1fr}.popup-app .details-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Extra definition and separation in the light theme. */
+body.light .metric,body.light .small-card,body.light .settings-card,body.light .order-card{box-shadow:0 2px 8px rgba(25,45,30,.08)}
+body.light .subtle,body.light .theme{background:#edf2eb;border-color:#aebdad;color:#354a3b}
+body.light .tab.active{background:#d0dfd0;color:#1a291e}
+body.light .log-list{border-top-color:#aebdad}
+body.light .log-item{border-bottom-color:#bdcbbc}
+body.light .metric-value,body.light .small-card strong,body.light .order-card-bottom strong{color:#18271c}
+body.light .empty-state{border-color:#aebdad;background:#e8eee6}

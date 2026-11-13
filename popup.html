@@ -9,7 +9,7 @@
 <body class="popup-app">
 <div class="app">
   <header class="topbar">
-    <div class="brand"><span class="brand-mark">ob</span><span>order bridge</span><span class="version">v0.2.1</span></div>
+    <div class="brand"><span class="brand-logo-shell"><img class="brand-logo" src="assets/order-bridge-logo.webp" alt="Order Bridge"></span><span class="version">v0.2.2</span></div>
     <button id="themeToggle" class="theme" aria-label="Перемкнути тему"><span id="themeIcon">☾</span></button>
     <nav class="tabs">
       <button class="tab active" data-tab="workspace">Робочий простір</button>
@@ -70,19 +70,21 @@
           </div>
         </section>
         <section class="dashboard-panel">
-          <div class="section-heading log-heading"><div><div class="eyebrow">ЖУРНАЛ</div><h2>Останні операції</h2></div></div>
-          <div id="activityList" class="log-list"><div class="empty-state">Операцій ще немає.</div></div>
-          <p class="stage-note">Stage 2: отримання та розбір замовлень GOST. Передавання до зовнішнього ресурсу буде додано на Stage 4.</p>
+          <div class="section-heading log-heading">
+            <div><div class="eyebrow">ЖУРНАЛ</div><h2>Останні операції</h2></div>
+            <button id="toggleActivity" class="subtle">Приховати</button>
+          </div>
+          <div id="activityPanel">
+            <div id="activityList" class="log-list"><div class="empty-state">Операцій ще немає.</div></div>
+            <p class="stage-note">Stage 2: отримання та розбір замовлень GOST. Передавання до зовнішнього ресурсу буде додано на Stage 4.</p>
+          </div>
         </section>
       </div>
     </section>
 
     <section id="settings" class="view">
-      <div class="page-title"><div class="eyebrow">КОНФІГУРАЦІЯ</div><h1>Налаштування парсера</h1><p>Джерело замовлень та параметри синхронізації.</p></div>
+      <div class="page-title"><div class="eyebrow">КОНФІГУРАЦІЯ</div><h1>Налаштування парсера</h1><p>Параметри синхронізації та передавання замовлень.</p></div>
       <div class="settings-card">
-        <label for="sourceType">Джерело замовлень</label>
-        <select id="sourceType"><option value="gost">GOST · особистий кабінет</option><option value="custom" disabled>Інше джерело · майбутній етап</option></select>
-        <div class="field-help">GOST використовує активну авторизовану сесію браузера. Повторний логін у розширенні не потрібен.</div>
         <label for="pollInterval">Частота перевірки нових замовлень</label>
         <select id="pollInterval">
           <option value="120">Кожні 2 хвилини</option>
@@ -90,9 +92,6 @@
           <option value="300">Кожні 5 хвилин</option>
         </select>
         <div class="field-help">Chrome може трохи затримувати фонові сигнали. Після пробудження браузера пропущена перевірка буде виконана.</div>
-        <label for="historyMode">Початкова історія</label>
-        <select id="historyMode"><option value="baseline_only">Зафіксувати як історію, не передавати</option></select>
-        <div class="field-help">Під час першого підключення наявні ID запам'ятовуються. Передаватися надалі мають лише нові замовлення.</div>
         <div class="divider"></div>
         <div class="section-heading"><div><div class="eyebrow">ПРИЗНАЧЕННЯ</div><h2>Куди передавати</h2></div><span class="demo-tag">STAGE 4</span></div>
         <label for="connector">Тип підключення</label>
@@ -104,7 +103,7 @@
       <div class="settings-card safety"><strong>Захист облікових даних</strong><p>Bearer-токен GOST використовується лише в контексті сторінки та не зберігається розширенням. У локальному сховищі залишаються ID, технічні статуси й нормалізовані товарні дані без ПІБ, телефонів, адрес і коментарів покупців.</p></div>
     </section>
   </main>
-  <footer>ORDER BRIDGE <span>·</span> STAGE 2 · v0.2.1</footer>
+  <footer>ORDER BRIDGE <span>·</span> STAGE 2 · v0.2.2</footer>
 </div>
 <script src="order-normalizer.js"></script>
 <script src="app.js"></script>

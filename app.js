@@ -117,7 +117,6 @@
     $("#intervalMetric").textContent = Number(config.pollIntervalSeconds || 120).toLocaleString("uk-UA") + " секунд";
     $("#lastCheck").textContent = formatTime(state.lastCheckAt);
     $("#pollInterval").value = String(config.pollIntervalSeconds || 120);
-    $("#historyMode").value = config.historyMode || "baseline_only";
     renderOrders(summaries);
     renderActivity(data?.activity || []);
   }
@@ -168,10 +167,15 @@
     details.hidden = !details.hidden;
     $("#toggleDetails").textContent = details.hidden ? "Показати" : "Приховати";
   });
+  $("#toggleActivity").addEventListener("click", () => {
+    const panel = $("#activityPanel");
+    panel.hidden = !panel.hidden;
+    $("#toggleActivity").textContent = panel.hidden ? "Показати" : "Приховати";
+  });
   $("#saveSettings").addEventListener("click", async () => {
     const pollIntervalSeconds = Math.max(120, Number($("#pollInterval").value) || 120);
     const result = await sendAction("OB_SAVE_CONFIG", {
-      config: { pollIntervalSeconds, historyMode: $("#historyMode").value }
+      config: { pollIntervalSeconds }
     });
     $("#saveNotice").textContent = result?.ok ? "Налаштування збережено." : (result?.message || "Не вдалося зберегти.");
     await refresh();

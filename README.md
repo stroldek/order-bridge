@@ -1,8 +1,12 @@
 # Order Bridge
 
-Stage 2 — GOST source connector (v0.2.1)
+Stage 2 — GOST source connector (v0.2.2)
 
 ## What changed
+- Uses the supplied Order Bridge logo in the popup header; the brand wordmark is no longer recreated with text.
+- Removes fixed-source and historical-order mode controls from settings. The source remains GOST and the initial ID baseline always protects existing orders.
+- The operations log has its own collapsible panel, matching the metrics panel.
+- Light theme uses a muted green-gray surface palette with stronger card and control separation.
 - The extension UI is now a real Chrome toolbar popup (popup.html), not a tab opened by the extension.
 - Uses one familiar ghost emoji (👻) in every state, with state-specific motion/marks.
 - Watches GOST's authenticated order-list requests in the page's MAIN world.
@@ -14,7 +18,7 @@ Stage 2 — GOST source connector (v0.2.1)
 - Performs a full list refresh periodically to reconcile payment/status updates.
 - Calculates today's `total_price` against the fixed `Europe/Kyiv` calendar date and de-duplicates orders by ID to avoid double-counting overlapping pages.
 
-## Automated build\n\nEvery push to main validates the manifest and JavaScript, runs the normalizer tests, and uploads an installable ZIP artifact named order-bridge-v0.2.1 to the GitHub Actions run (30-day retention).\n\n## Install
+## Automated build\n\nEvery push to main validates the manifest and JavaScript, runs the normalizer tests, and uploads an installable ZIP artifact named order-bridge-v0.2.2 to the GitHub Actions run (30-day retention).\n\n## Install
 1. Download the repository ZIP from GitHub and extract it.
 2. Open chrome://extensions.
 3. Enable Developer mode.
