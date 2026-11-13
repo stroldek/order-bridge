@@ -139,4 +139,4 @@ footer span{padding:0 5px}
 .popup-app .notice{font-size:10px}
 .popup-app footer{height:29px;min-height:29px;flex:0 0 29px;padding:8px 0 9px;font-size:8px}
 .popup-app [hidden]{display:none!important}
-@media(max-width:680px){.popup-app{width:100vw;min-width:0;max-width:100vw}.popup-app .app{padding:0 12px}.popup-app .topbar{gap:8px}.popup-app .brand{gap:5px}.popup-app .brand .version{display:none}.popup-app .tab{padding:8px 6px;font-size:10px}.popup-app .dashboard-columns{grid-template-columns:1fr}.popup-app .details-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){.popup-app{width:100vw;min-width:0;max-width:100vw}.popup-app .app{padding:0 12px}.popup-app .topbar{gap:8px}.popup-app .brand{gap:5px}.popup-app .brand .version{display:none}.popup-app .tab{padding:8px 6px;font-size:10px}.popup-app .dashboard-columns{grid-template-columns:1fr}.popup-app .details-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
