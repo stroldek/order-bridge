@@ -11,6 +11,7 @@ const parsed = normalize({
   id: "test-order-01",
   number: 19314,
   total_price: "701.00",
+  total_discount: 100,
   payment_status: "awaiting_payment",
   created_at: "2026-11-12T15:10:30.000000Z",
   sub_orders: [
@@ -36,11 +37,12 @@ assert.equal(parsed.productLineCount, 3);
 assert.equal(parsed.totalQuantity, 4);
 assert.equal(parsed.products.reduce((sum, item) => sum + item.totalPrice, 0), 801);
 assert.equal(parsed.totalPrice, 701, "Order total must not be silently replaced by sum of product lines.");
+assert.equal(parsed.totalDiscount, 100);
 
 process.env.TZ = "Europe/Kyiv";
 const revenue = todayRevenue([
   { id: "paid-today", paymentDate: "2026-11-13T10:19:47.000000Z", totalPrice: "5216.00" },
-  { id: "paid-yesterday", paymentDate: "2026-11-12T23:00:00.000000Z", totalPrice: 1000 },
+  { id: "paid-yesterday", paymentDate: "2026-11-12T20:00:00.000000Z", totalPrice: 1000 },
   { id: "unpaid", paymentDate: null, totalPrice: 500 }
 ], new Date("2026-11-13T12:00:00+02:00"));
 assert.equal(revenue, 5216);
