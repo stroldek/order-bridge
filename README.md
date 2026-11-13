@@ -13,7 +13,7 @@ Stage 2 — GOST source connector (v0.2.0)
 - Stores only order IDs, operational metadata, and product summaries locally. Buyer name, phone, email, address, comments, and the raw full payload are not persisted.
 - Performs a full list refresh periodically to reconcile payment/status updates.
 
-## Install
+## Automated build\n\nEvery push to main validates the manifest and JavaScript, runs the normalizer tests, and uploads an installable ZIP artifact named order-bridge-v0.2.0 to the GitHub Actions run (30-day retention).\n\n## Install
 1. Download the repository ZIP from GitHub and extract it.
 2. Open chrome://extensions.
 3. Enable Developer mode.
