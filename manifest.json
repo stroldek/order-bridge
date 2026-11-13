@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "Order Bridge",
+  "version": "0.1.0",
+  "description": "Order synchronization workspace for GOST and external services.",
+  "permissions": ["storage", "alarms", "tabs", "webRequest"],
+  "host_permissions": ["https://gost.ua/*", "https://api.gost.ua/*"],
+  "background": { "service_worker": "background.js" },
+  "action": { "default_title": "Order Bridge", "default_popup": "popup.html" },
+  "content_scripts": [{
+    "matches": ["https://gost.ua/*"],
+    "js": ["content.js"],
+    "run_at": "document_start"
+  }]
+}
