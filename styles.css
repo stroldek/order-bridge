@@ -61,67 +61,82 @@ footer span{padding:0 5px}
 .stage-note{color:var(--muted);font-size:10px;line-height:1.5;margin:17px 0 2px}
 [hidden]{display:none!important}
 
-/* Actual Chrome toolbar popup: compact fixed-width application window. */
-.popup-app{width:430px;min-width:430px;max-width:430px;min-height:520px;max-height:600px;overflow-x:hidden;overflow-y:auto;background:var(--bg)}
-.popup-app .app{width:100%;max-width:none;margin:0;padding:0 16px}
-.popup-app .topbar{height:auto;min-height:76px;padding:13px 0 10px;display:grid;grid-template-columns:1fr auto;gap:10px}
-.popup-app .tabs{grid-column:1/-1;grid-row:2;width:100%;margin:0;display:flex}
-.popup-app .tab{flex:1;padding:9px 6px;font-size:11px}
-.popup-app main{padding:20px 0 26px}
-.popup-app .status-row{align-items:center;gap:10px;margin-bottom:20px}
+/* Shared dashboard layout. */
+.dashboard-columns{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+.dashboard-panel{min-width:0}
+.dashboard-panel .section-heading.log-heading{margin-top:0}
+.dashboard-panel .orders-list,.dashboard-panel .log-list{max-height:320px;overflow-y:auto}
+
+/* Actual Chrome toolbar popup: wide, balanced workspace window. */
+.popup-app{width:680px;min-width:680px;max-width:680px;height:580px;min-height:580px;max-height:580px;overflow:hidden;background:var(--bg)}
+.popup-app .app{width:100%;height:580px;max-width:none;margin:0;padding:0 18px;display:flex;flex-direction:column}
+.popup-app .topbar{height:66px;min-height:66px;flex:0 0 66px;padding:0;display:flex;align-items:center;gap:16px}
+.popup-app .brand{gap:8px;font-size:13px}
+.popup-app .brand-mark{width:30px;height:30px;border-radius:9px}
+.popup-app .version{font-size:10px}
+.popup-app .tabs{display:flex;align-items:center;gap:4px;margin:0 0 0 auto;flex:0 0 auto}
+.popup-app .tab{padding:9px 11px;font-size:11px;white-space:nowrap}
+.popup-app .theme{width:32px;height:32px;flex:0 0 32px;font-size:16px}
+.popup-app main{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:14px 0 16px}
+.popup-app .view.active{display:block}
+.popup-app .status-row{align-items:center;gap:14px;margin-bottom:14px}
 .popup-app .status-card{min-width:0;flex:1;gap:12px;align-items:center}
 .popup-app .status-copy{min-width:0}
-.popup-app .status-copy h2{font-size:14px;line-height:1.25}
-.popup-app .status-copy p{font-size:10px;line-height:1.45}
-.popup-app .ghost{width:66px;height:70px;flex:0 0 66px;clip-path:none;display:grid;place-items:center;border-radius:0;background:transparent;box-shadow:none;color:inherit;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;font-size:57px;line-height:1;position:relative}
-.popup-app .ghost::after{content:"";position:absolute;right:0;top:2px;font-family:inherit;font-size:19px;font-weight:800;color:#e2c94f;text-shadow:0 1px 5px #0003}
+.popup-app .status-copy h2{font-size:15px;line-height:1.25;margin:3px 0}
+.popup-app .status-copy p{font-size:10px;line-height:1.4;margin:4px 0}
+.popup-app .eyebrow{font-size:9px;letter-spacing:1.05px}
+.popup-app .ghost{width:60px;height:62px;flex:0 0 60px;display:grid;place-items:center;border-radius:0;background:transparent;box-shadow:none;color:inherit;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;font-size:53px;line-height:1;position:relative}
+.popup-app .ghost::after{content:"";position:absolute;right:-1px;top:0;font-family:inherit;font-size:16px;font-weight:800;color:#e2c94f;text-shadow:0 1px 5px #0003}
 .popup-app .ghost.happy::after{content:"✦";color:#b8d64b}
 .popup-app .ghost.worried::after{content:"?"}
 .popup-app .ghost.confused::after{content:"…";color:var(--muted)}
 .popup-app .ghost.busy{animation:ghost-bob .55s ease-in-out infinite alternate}
-@keyframes ghost-bob{to{transform:translateY(-5px) rotate(5deg)}}
-.popup-app .status-actions{display:flex;flex-direction:column;gap:6px;flex:0 0 106px}
-.popup-app .status-actions .primary{width:100%;padding:10px 8px;font-size:11px;white-space:nowrap}
-.popup-app .status-actions .subtle{padding:7px}
-.popup-app .metrics{gap:9px;margin-bottom:24px}
-.popup-app .metric{padding:15px 14px;border-radius:13px;min-width:0}
+@keyframes ghost-bob{to{transform:translateY(-4px) rotate(4deg)}}
+.popup-app .status-actions{display:flex;flex-direction:row;align-items:center;gap:7px;flex:0 0 auto}
+.popup-app .status-actions .primary{min-width:110px;padding:10px 13px;font-size:11px;white-space:nowrap}
+.popup-app .status-actions .subtle{padding:8px 10px;font-size:10px;white-space:nowrap}
+.popup-app .metrics{grid-template-columns:1fr 1fr;gap:10px;margin-bottom:15px}
+.popup-app .metric{padding:13px 16px;border-radius:12px;min-width:0}
 .popup-app .metric-label{font-size:10px}
-.popup-app .metric-value{font-size:25px;margin:9px 0 5px;letter-spacing:-1px;white-space:nowrap}
-.popup-app .metric-foot{font-size:9px;line-height:1.35}
-.popup-app .section-heading{margin-bottom:10px}
-.popup-app .section-heading h2{font-size:14px}
-.popup-app .subtle{font-size:10px;padding:7px 8px}
-.popup-app .details-grid{grid-template-columns:1fr 1fr;gap:8px;margin-bottom:22px}
-.popup-app .small-card{padding:11px;border-radius:12px}
-.popup-app .small-label{font-size:9px;line-height:1.35;display:block}
-.popup-app .small-card strong{font-size:13px;margin:7px 0 3px}
-.popup-app .small-note{font-size:9px;line-height:1.3;display:block}
-.popup-app .log-item{gap:8px;padding:11px 1px}
-.popup-app .log-item strong{font-size:10px}
-.popup-app .log-item p{font-size:9px;line-height:1.4}
-.popup-app .log-item time{font-size:8px}
-.popup-app .log-icon{width:20px;height:20px}
-.popup-app .page-title h1{font-size:22px}
-.popup-app .settings-card{padding:16px;border-radius:13px}
-.popup-app .settings-card label{margin:13px 0 7px;font-size:11px}
-.popup-app .settings-card input,.popup-app .settings-card select{height:39px;font-size:11px}
-.popup-app .field-help{font-size:10px}
-.popup-app .full{margin-top:15px}
-.popup-app footer{padding:13px 0 18px;font-size:8px}
-.popup-app .orders-list{display:grid;gap:8px}
-.popup-app .order-card{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:11px 12px}
-.popup-app .order-card-top,.popup-app .order-card-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.popup-app .order-card-top strong{font-size:11px}
+.popup-app .metric-value{font-size:25px;margin:7px 0 4px;letter-spacing:-.8px;white-space:nowrap}
+.popup-app .metric-foot{font-size:9px;line-height:1.3}
+.popup-app .section-heading{margin:0 0 8px}
+.popup-app .section-heading h2{font-size:13px}
+.popup-app .subtle{font-size:10px;padding:7px 9px}
+.popup-app .details-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:14px}
+.popup-app .small-card{padding:9px 11px;border-radius:10px;min-width:0}
+.popup-app .small-label{font-size:9px;line-height:1.25;display:block}
+.popup-app .small-card strong{font-size:13px;margin:5px 0 2px}
+.popup-app .small-note{font-size:9px;line-height:1.25;display:block}
+.popup-app .dashboard-columns{grid-template-columns:1.08fr .92fr;gap:14px}
+.popup-app .dashboard-panel .section-heading.log-heading{margin:0 0 8px}
+.popup-app .dashboard-panel .orders-list,.popup-app .dashboard-panel .log-list{max-height:220px;overflow-y:auto;overscroll-behavior:contain}
+.popup-app .order-card{border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:9px 10px}
+.popup-app .order-card-top,.popup-app .order-card-bottom{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.popup-app .order-card-top strong{font-size:10px}
 .popup-app .order-state{font-size:9px;color:#a4c64b}
-.popup-app .product-lines{margin:9px 0;display:grid;gap:5px}
-.popup-app .product-line{display:flex;justify-content:space-between;gap:10px;font-size:9px;color:var(--muted)}
+.popup-app .product-lines{margin:7px 0;display:grid;gap:4px}
+.popup-app .product-line{display:flex;justify-content:space-between;gap:8px;font-size:9px;color:var(--muted)}
 .popup-app .product-line span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .popup-app .product-more{font-size:9px;color:var(--muted)}
-.popup-app .order-card-bottom{border-top:1px solid var(--line);padding-top:8px;font-size:9px;color:var(--muted)}
-.popup-app .order-card-bottom strong{color:var(--text);font-size:11px}
-.popup-app .empty-state{color:var(--muted);font-size:10px;line-height:1.5;padding:14px 12px;border:1px dashed var(--line);border-radius:11px}
-.popup-app .stage-note{color:var(--muted);font-size:9px;line-height:1.5;margin:14px 0 2px}
-.popup-app .safety p{font-size:10px;line-height:1.5}
-.popup-app .section-heading.log-heading{margin-top:18px}
+.popup-app .order-card-bottom{border-top:1px solid var(--line);padding-top:7px;font-size:9px;color:var(--muted)}
+.popup-app .order-card-bottom strong{color:var(--text);font-size:10px}
+.popup-app .empty-state{font-size:10px;line-height:1.4;padding:12px 10px;border-radius:10px}
+.popup-app .log-item{gap:7px;padding:9px 1px}
+.popup-app .log-item strong{font-size:10px}
+.popup-app .log-item p{font-size:9px;line-height:1.35}
+.popup-app .log-item time{font-size:8px}
+.popup-app .log-icon{width:18px;height:18px;border-radius:6px;font-size:14px}
+.popup-app .stage-note{font-size:9px;line-height:1.35;margin:10px 0 0}
+.popup-app .page-title{margin:3px 0 16px}
+.popup-app .page-title h1{font-size:21px}
+.popup-app .settings-card{padding:15px;border-radius:12px;margin-bottom:10px}
+.popup-app .settings-card label{margin:11px 0 6px;font-size:11px}
+.popup-app .settings-card input,.popup-app .settings-card select{height:36px;font-size:11px}
+.popup-app .field-help{font-size:9px;line-height:1.4;margin:6px 0 10px}
+.popup-app .divider{margin:14px 0}
+.popup-app .full{margin-top:12px}
+.popup-app .notice{font-size:10px}
+.popup-app footer{height:29px;min-height:29px;flex:0 0 29px;padding:8px 0 9px;font-size:8px}
 .popup-app [hidden]{display:none!important}
-@media(max-width:430px){.popup-app{width:100vw;min-width:0}.popup-app .app{padding:0 12px}}
+@media(max-width:680px){.popup-app{width:100vw;min-width:0;max-width:100vw}.popup-app .app{padding:0 12px}.popup-app .topbar{gap:8px}.popup-app .brand{gap:5px}.popup-app .brand .version{display:none}.popup-app .tab{padding:8px 6px;font-size:10px}.popup-app .dashboard-columns{grid-template-columns:1fr}.popup-app .details-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
