@@ -81,10 +81,14 @@
     };
   }
   function todayRevenue(summaries, now = new Date()) {
-    const zone = Intl.DateTimeFormat().resolvedOptions().timeZone || "Europe/Kyiv";
+    const zone = "Europe/Kyiv";
     const dateKey = value => {
       if (!value) return null;
-      const date = new Date(value);
+      const raw = value instanceof Date ? "" : String(value).trim();
+      // Date-only values are already calendar dates; do not reinterpret them as UTC.
+      const dateOnly = raw.match(/^(\d{4}-\d{2}-\d{2})$/);
+      if (dateOnly) return dateOnly[1];
+      const date = value instanceof Date ? value : new Date(value);
       if (Number.isNaN(date.getTime())) return null;
       const parts = new Intl.DateTimeFormat("en-CA", {
         timeZone: zone, year: "numeric", month: "2-digit", day: "2-digit"
@@ -93,11 +97,22 @@
       return values.year + "-" + values.month + "-" + values.day;
     };
     const today = dateKey(now);
-    return (summaries || []).reduce((sum, item) => {
-      return item?.paymentDate && dateKey(item.paymentDate) === today
-        ? sum + number(item.totalPrice)
-        : sum;
-    }, 0);
+    const uniqueOrders = new Map();
+    let anonymousIndex = 0;
+    for (const item of summaries || []) {
+      if (!item) continue;
+      const key = item.id === null || item.id === undefined || item.id === ""
+        ? "anonymous-" + (++anonymousIndex)
+        : String(item.id);
+      uniqueOrders.set(key, item);
+    }
+    let total = 0;
+    for (const item of uniqueOrders.values()) {
+      if (item.paymentDate && dateKey(item.paymentDate) === today) {
+        total += number(item.totalPrice ?? item.total_price);
+      }
+    }
+    return total;
   }
   self.OrderBridgeNormalizer = { number, listSummary, normalizeOrder, todayRevenue };
 })();
