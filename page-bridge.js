@@ -260,15 +260,15 @@
           emit("ORDER_DETAIL", { order });
         } catch (error) {
           const isAuthFailure = Boolean(error?.auth || error?.authMissing);
-          emit("ORDER_DETAIL_FAILED", {
-            id,
-            message: String(error?.message || error),
-            auth: isAuthFailure
-          });
           if (isAuthFailure) {
             authFailure = true;
             break;
           }
+          emit("ORDER_DETAIL_FAILED", {
+            id,
+            message: String(error?.message || error),
+            auth: false
+          });
         }
       }
       if (authFailure) {
