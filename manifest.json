@@ -1,13 +1,13 @@
 {
   "manifest_version": 3,
   "name": "Order Bridge",
-  "version": "0.1.0",
-  "description": "Order synchronization workspace for GOST and external services.",
+  "version": "0.2.0",
+  "description": "Monitors GOST orders and prepares normalized order data for external integrations.",
+  "minimum_chrome_version": "111",
   "permissions": [
     "storage",
     "alarms",
-    "tabs",
-    null
+    "tabs"
   ],
   "host_permissions": [
     "https://gost.ua/*",
@@ -26,9 +26,20 @@
         "https://gost.ua/*"
       ],
       "js": [
+        "page-bridge.js"
+      ],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": [
+        "https://gost.ua/*"
+      ],
+      "js": [
         "content.js"
       ],
-      "run_at": "document_start"
+      "run_at": "document_start",
+      "world": "ISOLATED"
     }
   ]
 }
