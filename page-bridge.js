@@ -39,8 +39,9 @@
       const normalized = new Headers(headers || {});
       const value = normalized.get("authorization");
       if (value && /^Bearer\s+\S+/i.test(value)) {
+        const reused = Boolean(bearerAuthorization && bearerAuthorization === value);
         bearerAuthorization = value;
-        emit("AUTH_AVAILABLE", { available: true });
+        emit("AUTH_AVAILABLE", { available: true, reused });
       }
     } catch {}
   }
@@ -78,15 +79,13 @@
       try {
         const payload = await response.clone().json();
         const rows = summarizeRows(payload);
-        if (rows.length) {
-          emit("ORDERS_CAPTURED", {
-            rows,
-            currentPage: payload?.meta?.current_page ?? 1,
-            lastPage: payload?.meta?.last_page ?? 1,
-            total: payload?.meta?.orders_total ?? payload?.meta?.total ?? rows.length,
-            source: "page"
-          });
-        }
+        emit("ORDERS_CAPTURED", {
+          rows,
+          currentPage: payload?.meta?.current_page ?? 1,
+          lastPage: payload?.meta?.last_page ?? 1,
+          total: payload?.meta?.orders_total ?? payload?.meta?.total ?? rows.length,
+          source: "page"
+        });
       } catch {}
       return;
     }
@@ -139,7 +138,7 @@
         const payload = this.responseType === "json" ? this.response : parseJson(this.responseText);
         if (!payload) return;
         const rows = summarizeRows(payload);
-        if (rows.length) emit("ORDERS_CAPTURED", {
+        emit("ORDERS_CAPTURED", {
           rows,
           currentPage: payload?.meta?.current_page ?? 1,
           lastPage: payload?.meta?.last_page ?? 1,
@@ -295,10 +294,13 @@
       armed = true;
       setBuildIdFromWindow();
       emit("BRIDGE_ARMED", { buildIdAvailable: Boolean(buildId) });
+      // A still-open authenticated GOST tab can reconnect without requiring a reload.
+      if (bearerAuthorization) emit("AUTH_AVAILABLE", { available: true, reused: true });
     } else if (type === "DISARM") {
+      // Keep the token only in this page's memory closure. It is not sent to the
+      // extension, persisted, logged, or used while disarmed.
       armed = false;
-      bearerAuthorization = null;
-      emit("BRIDGE_DISARMED");
+      emit("BRIDGE_DISARMED", { authorizationCached: Boolean(bearerAuthorization) });
     } else if (type === "FETCH_BASELINE") {
       void scanOrders({ baseline: true });
     } else if (type === "POLL_NOW") {
