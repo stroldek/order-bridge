@@ -9,7 +9,7 @@
 <body class="preview-mode">
 <div class="app">
   <header class="topbar">
-    <div class="brand"><span class="brand-mark">ob</span><span>order bridge</span><span class="version">v0.2.0</span></div>
+    <div class="brand"><span class="brand-mark">ob</span><span>order bridge</span><span class="version">v0.2.1</span></div>
     <button id="themeToggle" class="theme" aria-label="Перемкнути тему"><span id="themeIcon">☾</span></button>
     <nav class="tabs">
       <button class="tab active" data-tab="workspace">Робочий простір</button>
@@ -59,17 +59,22 @@
         <article class="small-card"><span class="small-label">Помилки</span><strong id="errorsMetric">0</strong><span class="small-note">За час роботи розширення</span></article>
       </div>
 
-      <div class="section-heading log-heading">
-        <div><div class="eyebrow">ДАНІ GOST</div><h2>Останні замовлення</h2></div>
-        <button id="checkNowBtn" class="subtle">Перевірити зараз</button>
+      <div class="dashboard-columns">
+        <section class="dashboard-panel">
+          <div class="section-heading log-heading">
+            <div><div class="eyebrow">ДАНІ GOST</div><h2>Останні замовлення</h2></div>
+            <button id="checkNowBtn" class="subtle">Перевірити зараз</button>
+          </div>
+          <div id="ordersList" class="orders-list">
+            <div class="empty-state">Після підключення тут з'являться нові замовлення та їхні товари.</div>
+          </div>
+        </section>
+        <section class="dashboard-panel">
+          <div class="section-heading log-heading"><div><div class="eyebrow">ЖУРНАЛ</div><h2>Останні операції</h2></div></div>
+          <div id="activityList" class="log-list"><div class="empty-state">Операцій ще немає.</div></div>
+          <p class="stage-note">Stage 2: отримання та розбір замовлень GOST. Передавання до зовнішнього ресурсу буде додано на Stage 4.</p>
+        </section>
       </div>
-      <div id="ordersList" class="orders-list">
-        <div class="empty-state">Після підключення тут з'являться нові замовлення та їхні товари.</div>
-      </div>
-
-      <div class="section-heading log-heading"><div><div class="eyebrow">ЖУРНАЛ</div><h2>Останні операції</h2></div></div>
-      <div id="activityList" class="log-list"><div class="empty-state">Операцій ще немає.</div></div>
-      <p class="stage-note">Stage 2: отримання та розбір замовлень GOST. Передавання до зовнішнього ресурсу буде додано на Stage 4.</p>
     </section>
 
     <section id="settings" class="view">
@@ -99,7 +104,7 @@
       <div class="settings-card safety"><strong>Захист облікових даних</strong><p>Bearer-токен GOST використовується лише в контексті сторінки та не зберігається розширенням. У локальному сховищі залишаються ID, технічні статуси й нормалізовані товарні дані без ПІБ, телефонів, адрес і коментарів покупців.</p></div>
     </section>
   </main>
-  <footer>ORDER BRIDGE <span>·</span> STAGE 2 · 0.2.0</footer>
+  <footer>ORDER BRIDGE <span>·</span> STAGE 2 · v0.2.1</footer>
 </div>
 <script src="order-normalizer.js"></script>
 <script src="app.js"></script>
