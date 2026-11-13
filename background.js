@@ -23,6 +23,7 @@ const DEFAULT_STATE = {
   pollCounter: 0
 };
 const DEFAULT_CONFIG = { pollIntervalSeconds: 120, source: "gost", historyMode: "baseline_only" };
+let pageEventQueue = Promise.resolve();
 
 // Prevent isolated content scripts from reading extension-local operational data.
 void chrome.storage.local.setAccessLevel({ accessLevel: "TRUSTED_CONTEXTS" }).catch(() => {});
@@ -421,7 +422,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       sendResponse({ ok: false });
       return false;
     }
-    void handlePageEvent(message.eventType, message.payload || {}, tab.id)
+    pageEventQueue = pageEventQueue
+      .then(() => handlePageEvent(message.eventType, message.payload || {}, tab.id));
+    pageEventQueue
       .then(() => sendResponse({ ok: true }))
       .catch(error => sendResponse({ ok: false, error: String(error?.message || error) }));
     return true;
