@@ -159,9 +159,9 @@
     return originalSend.apply(this, args);
   };
 
-  async function requestJson(url, options = {}) {
+  async function requestJson(url, options = {}, treatAuthFailure = true) {
     const response = await nativeFetch(url, options);
-    if (response.status === 401 || response.status === 403) {
+    if (treatAuthFailure && (response.status === 401 || response.status === 403)) {
       const error = new Error("GOST відхилив авторизований запит.");
       error.auth = true;
       throw error;
@@ -199,11 +199,12 @@
     const path = "/_next/data/" + encodeURIComponent(buildId) + "/" +
       encodeURIComponent(locale || "uk") + "/partner-orders/" +
       encodeURIComponent(id) + ".json?id=" + encodeURIComponent(id);
+    // The Next.js detail route is requested on gost.ua itself. Do not forward
+    // the API Bearer token to this different host; use the page's same-origin session.
     const headers = { "Accept": "application/json" };
-    if (bearerAuthorization) headers.Authorization = bearerAuthorization;
     const payload = await requestJson(new URL(path, location.origin).href, {
       method: "GET", credentials: "same-origin", headers
-    });
+    }, false);
     const order = readNextOrder(payload, id);
     if (!order) throw new Error("У відповіді Next.js не знайдено деталізацію замовлення " + id + ".");
     return order;
@@ -252,20 +253,29 @@
         lastPage
       });
 
+      let authFailure = false;
       for (const id of ids) {
         try {
           const order = await fetchOrderDetail(id);
           emit("ORDER_DETAIL", { order });
         } catch (error) {
+          const isAuthFailure = Boolean(error?.auth || error?.authMissing);
           emit("ORDER_DETAIL_FAILED", {
             id,
             message: String(error?.message || error),
-            auth: Boolean(error?.auth || error?.authMissing)
+            auth: isAuthFailure
           });
-          if (error?.auth || error?.authMissing) break;
+          if (isAuthFailure) {
+            authFailure = true;
+            break;
+          }
         }
       }
-      emit("POLL_COMPLETE", { checkedAt: new Date().toISOString() });
+      if (authFailure) {
+        emit("BRIDGE_ERROR", { message: "Сесія GOST більше не дозволяє отримувати деталізацію замовлень.", auth: true });
+      } else {
+        emit("POLL_COMPLETE", { checkedAt: new Date().toISOString() });
+      }
     } catch (error) {
       emit("BRIDGE_ERROR", {
         message: String(error?.message || error),
