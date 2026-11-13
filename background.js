@@ -131,11 +131,15 @@ async function handleContentReady(tabId) {
 async function handleBaseline(payload, tabId) {
   const rows = Array.isArray(payload.rows) ? payload.rows : [];
   const ids = [...new Set(rows.map(row => String(row.id)).filter(Boolean))];
-  const summaries = rows.map(row => OrderBridgeNormalizer.listSummary(row));
+  const uniqueSummaries = new Map();
+  for (const row of rows) {
+    const summary = OrderBridgeNormalizer.listSummary(row);
+    if (summary.id) uniqueSummaries.set(summary.id, { ...(uniqueSummaries.get(summary.id) || {}), ...summary });
+  }
   await chrome.storage.local.set({
     [KEYS.knownIds]: ids,
     [KEYS.pendingIds]: [],
-    [KEYS.summaries]: summaries
+    [KEYS.summaries]: [...uniqueSummaries.values()]
   });
   await patchState({
     connectionState: "connected",
@@ -271,12 +275,43 @@ async function handlePageEvent(eventType, payload, tabId) {
   }
 
   if (eventType === "AUTH_AVAILABLE") {
-    if (["auth_expired", "page_unavailable", "error"].includes(state.connectionState)) {
-      await patchState({ connectionState: state.baselineCompleted ? "connected" : "awaiting_source", lastError: null });
+    if (state.connectionState === "awaiting_source") {
+      if (payload.reused) {
+        if (state.baselineCompleted) {
+          const current = await readAll();
+          await patchState({
+            connectionState: "connected",
+            monitorTabId: tabId,
+            lastError: null,
+            lastSuccessAt: new Date().toISOString()
+          });
+          await createPollingAlarm();
+          await sendPageCommand(tabId, "POLL_NOW", {
+            knownIds: current.knownIds,
+            pendingIds: current.pendingIds
+          });
+          await logActivity("Повторне підключення відновлено", "Використано активну авторизацію GOST без перезавантаження сторінки.");
+        } else {
+          await patchState({ connectionState: "scanning_history", monitorTabId: tabId, lastError: null });
+          await sendPageCommand(tabId, "FETCH_BASELINE");
+          await logActivity("Авторизацію GOST відновлено", "Запущено початкове сканування історії.");
+        }
+      } else {
+        await patchState({ monitorTabId: tabId });
+        await logActivity("Авторизований запит GOST виявлено", "Bearer-заголовок визначено; значення не зберігається.");
+        if (state.baselineCompleted) {
+          await patchState({ connectionState: "connected", monitorTabId: tabId, lastError: null });
+          await createPollingAlarm();
+        }
+      }
+    } else if (["auth_expired", "page_unavailable", "error"].includes(state.connectionState)) {
+      await patchState({
+        connectionState: state.baselineCompleted ? "connected" : "awaiting_source",
+        monitorTabId: tabId,
+        lastError: null
+      });
       await createPollingAlarm();
       await logActivity("Авторизацію GOST відновлено", "Виявлено новий авторизований запит.");
-    } else if (state.connectionState === "awaiting_source") {
-      await logActivity("Авторизований запит GOST виявлено", "Bearer-заголовок визначено; значення не зберігається.");
     }
     return;
   }
