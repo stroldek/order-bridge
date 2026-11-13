@@ -39,12 +39,14 @@ assert.equal(parsed.products.reduce((sum, item) => sum + item.totalPrice, 0), 80
 assert.equal(parsed.totalPrice, 701, "Order total must not be silently replaced by sum of product lines.");
 assert.equal(parsed.totalDiscount, 100);
 
-process.env.TZ = "Europe/Kyiv";
+process.env.TZ = "America/Los_Angeles";
 const revenue = todayRevenue([
   { id: "paid-today", paymentDate: "2026-11-13T10:19:47.000000Z", totalPrice: "5216.00" },
+  { id: "paid-today", paymentDate: "2026-11-13T10:19:47.000000Z", totalPrice: "5216.00" },
   { id: "paid-yesterday", paymentDate: "2026-11-12T20:00:00.000000Z", totalPrice: 1000 },
+  { id: "kyiv-today-utc-yesterday", paymentDate: "2026-11-12T22:30:00.000Z", totalPrice: 75 },
   { id: "unpaid", paymentDate: null, totalPrice: 500 }
 ], new Date("2026-11-13T12:00:00+02:00"));
-assert.equal(revenue, 5216);
+assert.equal(revenue, 5291, "Revenue must use Europe/Kyiv and count each order ID once.");
 
 console.log("Order Bridge normalizer tests passed.");
