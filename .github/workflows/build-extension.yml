@@ -1,0 +1,50 @@
+name: Build and validate Chrome extension
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-and-package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Validate manifest
+        run: node -e "JSON.parse(require('fs').readFileSync('manifest.json', 'utf8'))"
+
+      - name: Check JavaScript syntax
+        run: |
+          node --check background.js
+          node --check page-bridge.js
+          node --check content.js
+          node --check order-normalizer.js
+          node --check app.js
+
+      - name: Run normalizer tests
+        run: node tests/normalizer.test.js
+
+      - name: Package extension
+        run: |
+          mkdir -p dist
+          zip -r dist/order-bridge-v0.2.0.zip \
+            manifest.json background.js page-bridge.js content.js \
+            order-normalizer.js popup.html app.js styles.css \
+            README.md START_HERE.html
+
+      - name: Upload installable extension ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: order-bridge-v0.2.0
+          path: dist/order-bridge-v0.2.0.zip
+          retention-days: 30
