@@ -423,6 +423,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       return false;
     }
     pageEventQueue = pageEventQueue
+      .catch(() => {})
       .then(() => handlePageEvent(message.eventType, message.payload || {}, tab.id));
     pageEventQueue
       .then(() => sendResponse({ ok: true }))
