@@ -1,3 +1,16 @@
 <!doctype html>
-<html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Order Bridge · Start</title><style>
-:root{color-scheme:dark;font-family:Inter,system-ui,sans-serif;background:#101914;color:#eef4ef}body{margin:0;min-height:100vh;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 0,#244735 0,transparent 55%),#101914}.wrap{max-width:650px;padding:36px}.panel{background:#18251e;border:1px solid #34483a;border-radius:24px;padding:32px}h1{font-size:32px;margin:0 0 8px}p{color:#b8c8bd;line-height:1.6}.btn{display:inline-block;background:#d6ee58;color:#172016;text-decoration:none;padding:13px 20px;border-radius:12px;font-weight:700;margin:12px 8px 0 0}.muted{font-size:13px;color:#91a397}</style></head><body><main class="wrap"><section class="panel"><h1>Order Bridge</h1><p>Stage 1 · UI Foundation · v0.1.0</p><p>Відкрийте браузерний прототип інтерфейсу або встановіть розширення в Chrome для тестування popup та структури проєкту.</p><a class="btn" href="index.html">Відкрити preview</a><a class="btn" href="https://github.com/stroldek/order-bridge">GitHub repository</a><p class="muted">У цій версії підключення, дашборди та налаштування демонстраційні. Реальне отримання/передавання замовлень ще не активоване.</p></section></main></body></html>
+<html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Order Bridge · Stage 2</title><style>
+:root{color-scheme:dark;font-family:Inter,system-ui,sans-serif;background:#101914;color:#eef4ef}
+body{margin:0;min-height:100vh;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 0,#244735 0,transparent 55%),#101914}
+.wrap{max-width:700px;padding:28px}.panel{background:#18251e;border:1px solid #34483a;border-radius:22px;padding:30px}
+h1{font-size:30px;margin:0 0 8px}p,li{color:#b8c8bd;line-height:1.6}
+.btn{display:inline-block;background:#d9ed62;color:#172016;text-decoration:none;padding:12px 18px;border-radius:11px;font-weight:700;margin:8px 8px 0 0}
+.muted{font-size:12px;color:#91a397}
+</style></head><body><main class="wrap"><section class="panel">
+<h1>Order Bridge</h1><p>Stage 2 · GOST source connector · v0.2.0</p>
+<p>Розширення працює у popup-вікні Chrome. Ця сторінка — лише стартова інструкція.</p>
+<a class="btn" href="https://github.com/stroldek/order-bridge/archive/refs/heads/main.zip">Завантажити ZIP</a>
+<a class="btn" href="https://github.com/stroldek/order-bridge">GitHub</a>
+<ol><li>Розпакуйте ZIP у папку.</li><li>Відкрийте chrome://extensions та ввімкніть Developer mode.</li><li>Натисніть Load unpacked і виберіть розпаковану папку.</li><li>Відкрийте GOST та авторизуйтеся у звичайному порядку.</li><li>Натисніть значок Order Bridge, виберіть «Підключити», відкрийте «Замовлення» та оновіть сторінку.</li></ol>
+<p class="muted">Початкова історія буде позначена як історична. Нові замовлення перевірятимуться кожні 120 секунд. На цьому етапі дані не передаються до CRM; Stage 2 призначений для перевірки отримання та розбору.</p>
+</section></main></body></html>
