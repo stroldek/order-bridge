@@ -1,1 +1,107 @@
-<!doctype html><html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Order Bridge</title><link rel="stylesheet" href="styles.css"></head><body><div class="app"><header class="topbar"><div class="brand"><span class="brand-mark">ob</span><span>order bridge</span><span class="version">v0.1.0</span></div><nav class="tabs"><button class="tab active" data-tab="workspace">Робочий простір</button><button class="tab" data-tab="settings">Налаштування парсера</button></nav><button id="themeToggle" class="theme" aria-label="Перемкнути тему"><span id="themeIcon">☾</span></button></header><main><section id="workspace" class="view active"><div class="status-row"><div class="status-card"><div id="ghost" class="ghost happy"><span class="eyes">••</span><span class="mouth">⌣</span><i class="spark s1">✦</i><i class="spark s2">✧</i></div><div><div class="eyebrow">СТАН СИСТЕМИ</div><h2 id="statusTitle">Очікує підключення</h2><p id="statusText">Увійдіть у GOST та натисніть «Підключити».</p></div></div><button id="connectBtn" class="primary connect">Підключити</button></div><div class="metrics"><article class="metric"><div class="metric-label">Замовлень передано</div><div class="metric-value" id="ordersMetric">0</div><div class="metric-foot"><span class="dot"></span> За весь час</div></article><article class="metric"><div class="metric-label">Грошиків сьогодні</div><div class="metric-value" id="moneyMetric">0 ₴</div><div class="metric-foot">За датою оплати</div></article></div><div class="section-heading"><div><div class="eyebrow">ОГЛЯД</div><h2>Операційна панель</h2></div><button id="toggleDetails" class="subtle">Приховати</button></div><div id="details" class="details-grid"><article class="small-card"><span class="small-label">Інтервал перевірки</span><strong>120 секунд</strong><span class="small-note">Перевірка нових замовлень</span></article><article class="small-card"><span class="small-label">Остання перевірка</span><strong id="lastCheck">Ще не виконувалась</strong><span class="small-note">Час локального браузера</span></article><article class="small-card"><span class="small-label">Нові замовлення</span><strong>0</strong><span class="small-note">Очікують синхронізації</span></article></div><div class="section-heading log-heading"><div><div class="eyebrow">АКТИВНІСТЬ</div><h2>Останні операції</h2></div><span class="demo-tag">ДЕМО</span></div><div class="log-list"><div class="log-item"><span class="log-icon">•</span><div><strong>Order Bridge готовий</strong><p>Інтерфейс завантажено. Очікується підключення.</p></div><time>Зараз</time></div></div></section><section id="settings" class="view"><div class="page-title"><div class="eyebrow">КОНФІГУРАЦІЯ</div><h1>Налаштування парсера</h1><p>Налаштуйте спосіб передавання замовлень у зовнішній ресурс.</p></div><div class="settings-card"><label for="connector">Тип підключення</label><select id="connector"><option value="webhook">Webhook / HTTP API</option><option value="crm">CRM через API</option><option value="google">Google Sheets</option><option value="custom">Власний формат (JSON)</option></select><div id="connectorDescription" class="field-help">Надсилання замовлення методом POST на адресу вашого endpoint.</div><label for="endpoint">URL отримувача</label><input id="endpoint" type="url" placeholder="https://example.com/api/orders"><label for="method">HTTP метод</label><select id="method"><option>POST</option><option>PUT</option></select><label for="authType">Авторизація отримувача</label><select id="authType"><option value="none">Без авторизації</option><option value="bearer">Bearer token</option><option value="header">Власний заголовок</option></select><div id="authFields"></div><div class="divider"></div><div class="section-heading"><div><div class="eyebrow">АДАПТАЦІЯ ДАНИХ</div><h2>Мапінг полів</h2></div><button id="addMapping" class="subtle">+ Додати поле</button></div><p class="field-help">Назви полів у різних CRM можуть відрізнятися. Тут буде налаштовуватися відповідність між полями GOST і полями отримувача.</p><div class="mapping-head"><span>Поле GOST</span><span>Поле отримувача</span></div><div id="mappingRows"></div><button id="saveSettings" class="primary full">Зберегти конфігурацію</button><div id="saveNotice" class="notice" aria-live="polite"></div></div><div class="settings-card safety"><strong>Безпека</strong><p>У версії 0.1 інтеграція не виконує мережевих запитів і не зберігає облікові дані. Сховище секретів та захищене передавання будуть реалізовані окремо.</p></div></section></main><footer>ORDER BRIDGE <span>·</span> STAGE 1 FOUNDATION</footer></div><script src="app.js"></script></body></html>
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Order Bridge · Browser Preview</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="preview-mode">
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">ob</span><span>order bridge</span><span class="version">v0.2.0</span></div>
+    <button id="themeToggle" class="theme" aria-label="Перемкнути тему"><span id="themeIcon">☾</span></button>
+    <nav class="tabs">
+      <button class="tab active" data-tab="workspace">Робочий простір</button>
+      <button class="tab" data-tab="settings">Налаштування парсера</button>
+    </nav>
+  </header>
+  <main>
+    <section id="workspace" class="view active">
+      <div class="status-row">
+        <div class="status-card">
+          <div id="ghost" class="ghost confused" aria-label="Стан привида">👻</div>
+          <div class="status-copy">
+            <div class="eyebrow">СТАН СИСТЕМИ</div>
+            <h2 id="statusTitle">Поки не підключено</h2>
+            <p id="statusText">Відкрийте GOST та натисніть «Підключити».</p>
+          </div>
+        </div>
+        <div class="status-actions">
+          <button id="connectBtn" class="primary">Підключити</button>
+          <button id="disconnectBtn" class="subtle" hidden>Відключити</button>
+        </div>
+      </div>
+
+      <div class="metrics">
+        <article class="metric">
+          <div class="metric-label">Замовлень передано</div>
+          <div class="metric-value" id="ordersMetric">0</div>
+          <div class="metric-foot">До зовнішнього ресурсу · Stage 4</div>
+        </article>
+        <article class="metric">
+          <div class="metric-label">Грошиків сьогодні</div>
+          <div class="metric-value" id="moneyMetric">0 ₴</div>
+          <div class="metric-foot">За payment_date · Europe/Kyiv</div>
+        </article>
+      </div>
+
+      <div class="section-heading">
+        <div><div class="eyebrow">ОГЛЯД</div><h2>Операційна панель</h2></div>
+        <button id="toggleDetails" class="subtle">Приховати</button>
+      </div>
+      <div id="details" class="details-grid">
+        <article class="small-card"><span class="small-label">Отримано від GOST</span><strong id="receivedMetric">0</strong><span class="small-note">Нові замовлення з деталями</span></article>
+        <article class="small-card"><span class="small-label">Історичних замовлень</span><strong id="historicalMetric">0</strong><span class="small-note">Не передаються автоматично</span></article>
+        <article class="small-card"><span class="small-label">Очікують деталізації</span><strong id="pendingMetric">0</strong><span class="small-note">Повторна спроба під час синхронізації</span></article>
+        <article class="small-card"><span class="small-label">Інтервал перевірки</span><strong id="intervalMetric">120 секунд</strong><span class="small-note">Періодичний моніторинг</span></article>
+        <article class="small-card"><span class="small-label">Остання перевірка</span><strong id="lastCheck">Ще не виконувалась</strong><span class="small-note">Час браузера</span></article>
+        <article class="small-card"><span class="small-label">Помилки</span><strong id="errorsMetric">0</strong><span class="small-note">За час роботи розширення</span></article>
+      </div>
+
+      <div class="section-heading log-heading">
+        <div><div class="eyebrow">ДАНІ GOST</div><h2>Останні замовлення</h2></div>
+        <button id="checkNowBtn" class="subtle">Перевірити зараз</button>
+      </div>
+      <div id="ordersList" class="orders-list">
+        <div class="empty-state">Після підключення тут з'являться нові замовлення та їхні товари.</div>
+      </div>
+
+      <div class="section-heading log-heading"><div><div class="eyebrow">ЖУРНАЛ</div><h2>Останні операції</h2></div></div>
+      <div id="activityList" class="log-list"><div class="empty-state">Операцій ще немає.</div></div>
+      <p class="stage-note">Stage 2: отримання та розбір замовлень GOST. Передавання до зовнішнього ресурсу буде додано на Stage 4.</p>
+    </section>
+
+    <section id="settings" class="view">
+      <div class="page-title"><div class="eyebrow">КОНФІГУРАЦІЯ</div><h1>Налаштування парсера</h1><p>Джерело замовлень та параметри синхронізації.</p></div>
+      <div class="settings-card">
+        <label for="sourceType">Джерело замовлень</label>
+        <select id="sourceType"><option value="gost">GOST · особистий кабінет</option><option value="custom" disabled>Інше джерело · майбутній етап</option></select>
+        <div class="field-help">GOST використовує активну авторизовану сесію браузера. Повторний логін у розширенні не потрібен.</div>
+        <label for="pollInterval">Частота перевірки нових замовлень</label>
+        <select id="pollInterval">
+          <option value="120">Кожні 2 хвилини</option>
+          <option value="180">Кожні 3 хвилини</option>
+          <option value="300">Кожні 5 хвилин</option>
+        </select>
+        <div class="field-help">Chrome може трохи затримувати фонові сигнали. Після пробудження браузера пропущена перевірка буде виконана.</div>
+        <label for="historyMode">Початкова історія</label>
+        <select id="historyMode"><option value="baseline_only">Зафіксувати як історію, не передавати</option></select>
+        <div class="field-help">Під час першого підключення наявні ID запам'ятовуються. Передаватися надалі мають лише нові замовлення.</div>
+        <div class="divider"></div>
+        <div class="section-heading"><div><div class="eyebrow">ПРИЗНАЧЕННЯ</div><h2>Куди передавати</h2></div><span class="demo-tag">STAGE 4</span></div>
+        <label for="connector">Тип підключення</label>
+        <select id="connector"><option value="webhook">Webhook / HTTP API</option><option value="crm">CRM через API</option><option value="google">Google Sheets</option><option value="custom">Власний формат JSON</option></select>
+        <div class="field-help">На цьому етапі блок призначення є макетом. Реальні запити до сторонніх ресурсів поки не виконуються.</div>
+        <button id="saveSettings" class="primary full">Зберегти налаштування</button>
+        <div id="saveNotice" class="notice" aria-live="polite"></div>
+      </div>
+      <div class="settings-card safety"><strong>Захист облікових даних</strong><p>Bearer-токен GOST використовується лише в контексті сторінки та не зберігається розширенням. У локальному сховищі залишаються ID, технічні статуси й нормалізовані товарні дані без ПІБ, телефонів, адрес і коментарів покупців.</p></div>
+    </section>
+  </main>
+  <footer>ORDER BRIDGE <span>·</span> STAGE 2 · 0.2.0</footer>
+</div>
+<script src="order-normalizer.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
