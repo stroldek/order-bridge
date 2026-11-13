@@ -24,6 +24,9 @@ const DEFAULT_STATE = {
 };
 const DEFAULT_CONFIG = { pollIntervalSeconds: 120, source: "gost", historyMode: "baseline_only" };
 
+// Prevent isolated content scripts from reading extension-local operational data.
+void chrome.storage.local.setAccessLevel({ accessLevel: "TRUSTED_CONTEXTS" }).catch(() => {});
+
 async function readAll() {
   const values = await chrome.storage.local.get(Object.values(KEYS));
   return {
@@ -267,7 +270,7 @@ async function handlePageEvent(eventType, payload, tabId) {
   }
 
   if (eventType === "AUTH_AVAILABLE") {
-    if (state.connectionState === "auth_expired" || state.connectionState === "page_unavailable") {
+    if (["auth_expired", "page_unavailable", "error"].includes(state.connectionState)) {
       await patchState({ connectionState: state.baselineCompleted ? "connected" : "awaiting_source", lastError: null });
       await createPollingAlarm();
       await logActivity("Авторизацію GOST відновлено", "Виявлено новий авторизований запит.");
@@ -286,7 +289,9 @@ async function handlePageEvent(eventType, payload, tabId) {
     } else {
       await mergeListRows(payload.rows || []);
       const known = new Set(knownIds.map(String));
-      const newIds = (payload.rows || []).map(row => String(row.id)).filter(id => id && !known.has(id));
+      const { pendingIds } = await readAll();
+      const pending = new Set(pendingIds.map(String));
+      const newIds = (payload.rows || []).map(row => String(row.id)).filter(id => id && !known.has(id) && !pending.has(id));
       if (newIds.length) {
         await addPendingIds(newIds);
         await sendPageCommand(tabId, "FETCH_DETAILS", { ids: newIds });
