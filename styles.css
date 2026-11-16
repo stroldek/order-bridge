@@ -69,8 +69,8 @@ footer span{padding:0 5px}
 .dashboard-panel .orders-list,.dashboard-panel .log-list{max-height:320px;overflow-y:auto}
 
 /* Actual Chrome toolbar popup: wide, balanced workspace window. */
-.popup-app{width:680px;min-width:680px;max-width:680px;height:580px;min-height:580px;max-height:580px;overflow:hidden;background:var(--bg)}
-.popup-app .app{width:100%;height:580px;max-width:none;margin:0;padding:0 18px;display:flex;flex-direction:column}
+.popup-app{width:680px;min-width:680px;max-width:680px;height:870px;min-height:870px;max-height:870px;overflow:hidden;background:var(--bg)}
+.popup-app .app{width:100%;height:870px;max-width:none;margin:0;padding:0 18px;display:flex;flex-direction:column}
 .popup-app .topbar{height:72px;min-height:72px;flex:0 0 72px;padding:0;display:flex;align-items:center;gap:10px}
 .popup-app .brand{gap:6px;font-size:13px}
 .popup-app .brand-logo-shell{padding:2px 5px;border-radius:9px}
@@ -189,3 +189,79 @@ body.light .fetched-order{box-shadow:0 1px 5px rgba(25,45,30,.06)}
 html,body,.popup-app,.popup-app main,.popup-app .dashboard-panel .orders-list,.popup-app .dashboard-panel .log-list,.popup-app .fetched-orders,.popup-app .audit-table-wrap{scrollbar-width:none!important;-ms-overflow-style:none!important}
 html::-webkit-scrollbar,body::-webkit-scrollbar,.popup-app *::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
 .popup-app .fetched-orders,.popup-app .dashboard-panel .orders-list,.popup-app .dashboard-panel .log-list,.popup-app main{overflow-y:auto;overscroll-behavior:contain}
+
+
+/* v0.2.9 readability pass: taller workspace and larger controls/text. */
+.popup-app .topbar{height:82px;min-height:82px;flex-basis:82px;gap:12px}
+.popup-app .brand-logo{width:142px;max-height:68px}
+.popup-app .version{font-size:11px}
+.popup-app .tab{padding:11px 13px;font-size:13px}
+.popup-app .theme,.popup-app .collapse-panel{width:38px;height:38px;flex-basis:38px;font-size:19px}
+.popup-app main{padding:20px 0 22px}
+.popup-app .status-row{gap:18px;margin-bottom:20px}
+.popup-app .status-card{gap:15px}
+.popup-app .status-copy h2{font-size:19px}
+.popup-app .status-copy p{font-size:13px;line-height:1.45}
+.popup-app .eyebrow{font-size:11px;letter-spacing:1.1px}
+.popup-app .ghost{width:70px;height:72px;flex-basis:70px;font-size:61px}
+.popup-app .status-actions .primary{min-width:125px;padding:12px 15px;font-size:13px}
+.popup-app .status-actions .subtle{padding:10px 12px;font-size:12px}
+.popup-app .metrics{gap:13px;margin-bottom:21px}
+.popup-app .metric{padding:17px 19px;border-radius:14px}
+.popup-app .metric-label{font-size:13px}
+.popup-app .metric-value{font-size:31px;margin:9px 0 6px}
+.popup-app .metric-foot{font-size:11px}
+.popup-app .section-heading{margin-bottom:11px}
+.popup-app .section-heading h2{font-size:17px}
+.popup-app .subtle{font-size:12px;padding:9px 11px}
+.popup-app .details-grid{gap:10px;margin-bottom:20px}
+.popup-app .small-card{padding:12px 13px;border-radius:12px}
+.popup-app .small-label{font-size:11px;line-height:1.35}
+.popup-app .small-card strong{font-size:16px;margin:7px 0 4px}
+.popup-app .small-note{font-size:11px;line-height:1.35}
+.popup-app .dashboard-columns{gap:17px}
+.popup-app .dashboard-panel .section-heading.log-heading{margin-bottom:11px}
+.popup-app .dashboard-panel .orders-list,.popup-app .dashboard-panel .log-list{max-height:470px}
+.popup-app .orders-list{gap:12px}
+.popup-app .order-card{padding:15px 15px;border-radius:12px}
+.popup-app .order-card-top strong{font-size:15px}
+.popup-app .order-state{font-size:12px}
+.popup-app .product-lines{margin:12px 0;gap:7px}
+.popup-app .product-line{font-size:13px;gap:10px}
+.popup-app .product-more{font-size:12px}
+.popup-app .order-card-bottom{padding-top:11px;font-size:12px}
+.popup-app .order-card-bottom strong{font-size:15px}
+.popup-app .empty-state{font-size:13px;line-height:1.5;padding:15px 13px}
+.popup-app .log-item{gap:11px;padding:15px 2px}
+.popup-app .log-item strong{font-size:13px}
+.popup-app .log-item p{font-size:12px;line-height:1.5}
+.popup-app .log-item time{font-size:11px}
+.popup-app .log-icon{width:25px;height:25px;border-radius:8px;font-size:18px;flex:0 0 25px}
+.popup-app .stage-note{font-size:11px;line-height:1.45;margin:13px 0 0}
+.popup-app .journal-switch{gap:8px;margin-bottom:11px}
+.popup-app .journal-tab{padding:8px 11px;font-size:12px;border-radius:9px}
+.popup-app .journal-tab span{min-width:20px;height:20px;font-size:10px}
+.popup-app .audit-caption{font-size:11px;line-height:1.45;margin-bottom:9px}
+.popup-app .fetched-orders{max-height:430px;gap:9px}
+.popup-app .fetched-order{border-radius:11px}
+.popup-app .fetched-order summary{padding:11px 12px;gap:10px}
+.popup-app .fetched-order summary strong{font-size:13px}
+.popup-app .fetched-order summary small{font-size:10px}
+.popup-app .audit-order-total{font-size:13px}
+.popup-app .audit-order-meta{gap:7px;padding:0 12px 10px;font-size:10px}
+.popup-app .audit-suborders{padding:8px 12px;font-size:10px;line-height:1.45}
+.popup-app .audit-table{font-size:10px}
+.popup-app .audit-table th,.popup-app .audit-table td{padding:7px 8px}
+.popup-app .audit-table td strong{font-size:10px;min-width:110px;max-width:160px}
+.popup-app .audit-table td small{font-size:9px}
+.popup-app .audit-empty{padding:14px!important}
+.popup-app .audit-order-foot{padding:8px 12px;font-size:9px}
+.popup-app footer{height:32px;min-height:32px;flex-basis:32px;padding:9px 0;font-size:9px}
+@media(max-height:906px){
+  .popup-app{height:calc(100vh - 36px);min-height:0;max-height:none}
+  .popup-app .app{height:100%}
+}
+@media(max-width:640px){
+  .popup-app .tab{padding:9px 7px;font-size:11px}
+  .popup-app .dashboard-columns{grid-template-columns:1fr}
+}
