@@ -6,6 +6,7 @@ const KEYS = {
   knownIds: "ob_known_ids",
   pendingIds: "ob_pending_ids",
   summaries: "ob_order_summaries",
+  auditOrders: "ob_audit_orders",
   activity: "ob_activity"
 };
 const ALARM_NAME = "order-bridge-poll";
@@ -36,6 +37,7 @@ async function readAll() {
     knownIds: values[KEYS.knownIds] || [],
     pendingIds: values[KEYS.pendingIds] || [],
     summaries: values[KEYS.summaries] || [],
+    auditOrders: values[KEYS.auditOrders] || [],
     activity: values[KEYS.activity] || []
   };
 }
@@ -192,7 +194,7 @@ async function addPendingIds(ids) {
 
 async function handleOrderDetail(order) {
   const normalized = OrderBridgeNormalizer.normalizeOrder(order);
-  const { knownIds, pendingIds, summaries, state } = await readAll();
+  const { knownIds, pendingIds, summaries, auditOrders, state } = await readAll();
   const known = new Set(knownIds.map(String));
   const pending = new Set(pendingIds.map(String));
   const isNew = !known.has(normalized.id);
@@ -216,17 +218,29 @@ async function handleOrderDetail(order) {
     itemCount: normalized.productLineCount,
     totalQuantity: normalized.totalQuantity,
     products: normalized.products.map(product => ({
+      subOrderId: product.subOrderId,
       id: product.id,
-      name: product.name,
-      sku: product.sku,
       externalId: product.externalId,
+      sku: product.sku,
+      name: product.name,
+      slug: product.slug,
+      category: product.category,
+      categoryId: product.categoryId,
       quantity: product.quantity,
       unitCode: product.unitCode,
+      packageQuantity: product.packageQuantity,
       price: product.price,
       discountPrice: product.discountPrice,
+      originalPrice: product.originalPrice,
       totalPrice: product.totalPrice,
-      category: product.category
+      discount: product.discount,
+      isCustomOrder: product.isCustomOrder,
+      active: product.active
     })),
+    subOrders: normalized.subOrders,
+    amountPrepaid: normalized.amountPrepaid,
+    paidAmount: normalized.paidAmount,
+    paymentBalance: normalized.paymentBalance,
     detailsParsedAt: new Date().toISOString()
   };
 
@@ -236,10 +250,17 @@ async function handleOrderDetail(order) {
     .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
     .slice(0, 5000);
 
+  const auditMap = new Map(auditOrders.map(item => [String(item.id), item]));
+  auditMap.set(summary.id, summary);
+  const nextAuditOrders = [...auditMap.values()]
+    .sort((a, b) => new Date(b.detailsParsedAt || 0) - new Date(a.detailsParsedAt || 0))
+    .slice(0, 500);
+
   await chrome.storage.local.set({
     [KEYS.knownIds]: [...known],
     [KEYS.pendingIds]: [...pending],
-    [KEYS.summaries]: nextSummaries
+    [KEYS.summaries]: nextSummaries,
+    [KEYS.auditOrders]: nextAuditOrders
   });
 
   if (isNew) {
@@ -430,6 +451,7 @@ chrome.runtime.onInstalled.addListener(async details => {
       [KEYS.knownIds]: [],
       [KEYS.pendingIds]: [],
       [KEYS.summaries]: [],
+      [KEYS.auditOrders]: [],
       [KEYS.activity]: []
     });
   }
