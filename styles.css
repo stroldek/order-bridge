@@ -114,23 +114,23 @@ footer span{padding:0 5px}
 .popup-app .small-note{font-size:9px;line-height:1.25;display:block}
 .popup-app .dashboard-columns{grid-template-columns:1.08fr .92fr;gap:14px}
 .popup-app .dashboard-panel .section-heading.log-heading{margin:0 0 8px}
-.popup-app .dashboard-panel .orders-list,.popup-app .dashboard-panel .log-list{max-height:220px;overflow-y:auto;overscroll-behavior:contain}
-.popup-app .order-card{border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:9px 10px}
+.popup-app .dashboard-panel .orders-list,.popup-app .dashboard-panel .log-list{max-height:300px;overflow-y:auto;overscroll-behavior:contain}
+.popup-app .order-card{border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:12px 12px}
 .popup-app .order-card-top,.popup-app .order-card-bottom{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.popup-app .order-card-top strong{font-size:10px}
-.popup-app .order-state{font-size:9px;color:#a4c64b}
-.popup-app .product-lines{margin:7px 0;display:grid;gap:4px}
-.popup-app .product-line{display:flex;justify-content:space-between;gap:8px;font-size:9px;color:var(--muted)}
+.popup-app .order-card-top strong{font-size:12px}
+.popup-app .order-state{font-size:10px;color:#a4c64b}
+.popup-app .product-lines{margin:9px 0;display:grid;gap:5px}
+.popup-app .product-line{display:flex;justify-content:space-between;gap:8px;font-size:11px;color:var(--muted)}
 .popup-app .product-line span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.popup-app .product-more{font-size:9px;color:var(--muted)}
-.popup-app .order-card-bottom{border-top:1px solid var(--line);padding-top:7px;font-size:9px;color:var(--muted)}
-.popup-app .order-card-bottom strong{color:var(--text);font-size:10px}
+.popup-app .product-more{font-size:10px;color:var(--muted)}
+.popup-app .order-card-bottom{border-top:1px solid var(--line);padding-top:9px;font-size:10px;color:var(--muted)}
+.popup-app .order-card-bottom strong{color:var(--text);font-size:12px}
 .popup-app .empty-state{font-size:10px;line-height:1.4;padding:12px 10px;border-radius:10px}
-.popup-app .log-item{gap:7px;padding:9px 1px}
-.popup-app .log-item strong{font-size:10px}
-.popup-app .log-item p{font-size:9px;line-height:1.35}
-.popup-app .log-item time{font-size:8px}
-.popup-app .log-icon{width:18px;height:18px;border-radius:6px;font-size:14px}
+.popup-app .log-item{gap:9px;padding:12px 1px}
+.popup-app .log-item strong{font-size:11px}
+.popup-app .log-item p{font-size:10px;line-height:1.45}
+.popup-app .log-item time{font-size:9px}
+.popup-app .log-icon{width:21px;height:21px;border-radius:7px;font-size:16px}
 .popup-app .stage-note{font-size:9px;line-height:1.35;margin:10px 0 0}
 .popup-app .page-title{margin:3px 0 16px}
 .popup-app .page-title h1{font-size:21px}
