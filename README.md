@@ -1,13 +1,13 @@
 # Order Bridge
 
-Stage 2 — GOST source connector (v0.2.9)
+Stage 2 — GOST source connector (v0.3.0)
 
 ## What changed
 - Persistent floating panel anchored bottom-right on GOST. It stays open when focus moves elsewhere and returns after reload; collapse it explicitly with the minus control.
 - Injected only on `https://gost.ua/*`; never shown on other sites. Toolbar icon toggles it on GOST.
 - Scrollbar tracks hidden while mouse-wheel and two-finger touchpad scrolling remain available.\n- The collapsed launcher can be dragged anywhere on screen; its position is saved across page reloads. Re-expanding always restores the full panel to the bottom-right corner.
-- Adds a parsed-order audit view inside the operations journal: expandable order rows, payment/status metadata, sub-order counts, and a product table with SKU, quantity, unit, price, discounted price, and line total.
-- Keeps up to 500 detailed parsed orders locally for inspection. Stored audit data excludes buyer names, phone numbers, email, delivery addresses, and comments.
+- Moves complete order details directly into each card in “Останні замовлення”. Historical orders keep the neutral style; orders first detected after baseline receive a subtle green outline and a “НОВЕ” marker.
+- Keeps up to 500 detailed parsed orders locally for display inside “Останні замовлення”. Stored data excludes buyer names, phone numbers, email, delivery addresses, and comments.
 - Keeps the supplied transparent logo transparent in the popup; no theme-colored or black rectangular backing is drawn behind it.
 
 - Uses the supplied Order Bridge logo in the popup header; the brand wordmark is no longer recreated with text.
@@ -25,7 +25,7 @@ Stage 2 — GOST source connector (v0.2.9)
 - Performs a full list refresh periodically to reconcile payment/status updates.
 - Calculates today's `total_price` against the fixed `Europe/Kyiv` calendar date and de-duplicates orders by ID to avoid double-counting overlapping pages.
 
-## Automated build\n\nEvery push to main validates the manifest and JavaScript, runs the normalizer tests, and uploads an installable ZIP artifact named order-bridge-v0.2.9 to the GitHub Actions run (30-day retention).\n\n## Install
+## Automated build\n\nEvery push to main validates the manifest and JavaScript, runs the normalizer tests, and uploads an installable ZIP artifact named order-bridge-v0.3.0 to the GitHub Actions run (30-day retention).\n\n## Install
 1. Download the repository ZIP from GitHub and extract it.
 2. Open chrome://extensions.
 3. Enable Developer mode.
