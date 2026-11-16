@@ -133,7 +133,7 @@
         '</span><span>Доставка: ' + escapeHtml(order.deliveryType || "—") +
         '</span><span>Знижка: ' + formatMoney(order.totalDiscount) +
         '</span><span>Підзамовлень: ' + subOrders.length +
-        '</span><span>Розібрано: ' + formatDate(order.detailsParsedAt) + '</span></div>' +
+        '</span><span>Розібрано: ' + (order.detailsParsedAt ? formatDate(order.detailsParsedAt) : 'ще не завантажено') + '</span></div>' +
         '<div class="audit-suborders">' + escapeHtml(subOrderLabel) + '</div>' +
         '<div class="audit-table-wrap"><table class="audit-table"><thead><tr><th>#</th><th>Товар / ідентифікатори</th><th>К-сть</th><th>Ціна</th><th>Ціна зі знижкою</th><th>Сума</th></tr></thead><tbody>' +
         productRows + '</tbody></table></div>' +
