@@ -265,3 +265,29 @@ html::-webkit-scrollbar,body::-webkit-scrollbar,.popup-app *::-webkit-scrollbar{
   .popup-app .tab{padding:9px 7px;font-size:11px}
   .popup-app .dashboard-columns{grid-template-columns:1fr}
 }
+
+
+/* v0.3.0: order details live inside the latest-orders panel. */
+.popup-app .dashboard-columns{grid-template-columns:1fr}
+.popup-app .dashboard-panel .orders-list{max-height:490px}
+.popup-app .dashboard-panel .log-list{max-height:230px}
+.popup-app .order-card{border-color:var(--line);transition:border-color .15s,background .15s}
+.popup-app .order-card-new{border:1.5px solid #78b987;background:linear-gradient(110deg,rgba(89,157,105,.10),var(--panel) 58%);box-shadow:0 0 0 1px rgba(112,183,128,.08)}
+body.light .popup-app .order-card-new{border-color:#65a977;background:linear-gradient(110deg,rgba(91,166,111,.12),var(--panel) 58%);box-shadow:0 0 0 1px rgba(91,166,111,.10)}
+.popup-app .order-kind{font-size:10px;font-weight:750;letter-spacing:.65px;padding:4px 7px;border-radius:6px;white-space:nowrap}
+.popup-app .order-kind.new{color:#a8d9b2;background:rgba(91,166,111,.16)}
+.popup-app .order-kind.historical{color:var(--muted);background:var(--soft)}
+body.light .popup-app .order-kind.new{color:#286a3b;background:#dcefe0}
+.popup-app .order-card-subtitle{font-size:11px;color:var(--muted);margin-top:5px}
+.popup-app .order-detail-expand{margin-top:10px;border-top:1px solid var(--line);padding-top:8px}
+.popup-app .order-detail-expand>summary{cursor:pointer;color:var(--muted);font-size:11px;font-weight:650;list-style:none}
+.popup-app .order-detail-expand>summary::-webkit-details-marker{display:none}
+.popup-app .order-detail-expand>summary:after{content:"＋";float:right}
+.popup-app .order-detail-expand[open]>summary:after{content:"−"}
+.popup-app .order-detail-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;padding:10px 0;font-size:10px;color:var(--muted)}
+.popup-app .order-detail-meta span{min-width:0;overflow-wrap:anywhere}
+.popup-app .order-detail-expand .audit-table{font-size:10px}
+.popup-app .order-detail-expand .audit-table th,.popup-app .order-detail-expand .audit-table td{padding:7px 8px}
+.popup-app .order-detail-expand .audit-table td strong{font-size:10px;min-width:110px;max-width:180px}
+.popup-app .order-detail-expand .audit-table td small{font-size:9px}
+.popup-app .order-detail-expand .audit-order-foot{font-size:9px}
