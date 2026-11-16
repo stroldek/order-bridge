@@ -86,6 +86,60 @@
     }).join("");
   }
 
+  function formatDate(value) {
+    if (!value) return "—";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return escapeHtml(value);
+    return escapeHtml(new Intl.DateTimeFormat("uk-UA", {
+      day: "2-digit", month: "2-digit", year: "numeric",
+      hour: "2-digit", minute: "2-digit"
+    }).format(date));
+  }
+
+  function renderFetchedOrders(items) {
+    const container = $("#fetchedOrders");
+    const orders = (items || []).slice(0, 500);
+    $("#fetchedCount").textContent = String(orders.length);
+    if (!orders.length) {
+      container.innerHTML = '<div class="empty-state">Деталізованих замовлень поки немає. Вони з’являться після отримання нових замовлень із GOST.</div>';
+      return;
+    }
+    container.innerHTML = orders.map(order => {
+      const products = Array.isArray(order.products) ? order.products : [];
+      const productRows = products.length ? products.map((product, index) =>
+        '<tr><td>' + (index + 1) + '</td><td><strong>' + escapeHtml(product.name || "Без назви") +
+        '</strong><small>' + (product.sku ? 'SKU: ' + escapeHtml(product.sku) : 'SKU: —') +
+        (product.externalId ? ' · ID: ' + escapeHtml(product.externalId) : '') +
+        '</small></td><td>' + escapeHtml(product.quantity ?? 0) + ' ' + escapeHtml(product.unitCode || "") +
+        '</td><td>' + formatMoney(product.price) + '</td><td>' + formatMoney(product.discountPrice ?? product.originalPrice ?? product.price) +
+        '</td><td><strong>' + formatMoney(product.totalPrice) + '</strong></td></tr>'
+      ).join("") : '<tr><td colspan="6" class="audit-empty">У відповіді немає товарних позицій.</td></tr>';
+      const subOrders = Array.isArray(order.subOrders) ? order.subOrders : [];
+      const subOrderLabel = subOrders.length
+        ? subOrders.map((item, index) => 'Підзамовлення ' + (index + 1) + (item.number ? ' · №' + escapeHtml(item.number) : '') + ' · ' + Number(item.productCount || 0) + ' поз.').join(' / ')
+        : 'Підзамовлення: —';
+      return '<details class="fetched-order" data-order-id="' + escapeHtml(order.id) + '">' +
+        '<summary><span><strong>№' + escapeHtml(order.number ?? order.id) + '</strong><small>' +
+        formatDate(order.createdAt) + ' · ' + escapeHtml(order.status || 'Статус —') + '</small></span>' +
+        '<span class="audit-order-total">' + formatMoney(order.totalPrice) + '<small>' +
+        products.length + ' поз. · ' + escapeHtml(order.totalQuantity ?? 0) + ' шт.</small></span></summary>' +
+        '<div class="audit-order-meta"><span>Оплата: ' + escapeHtml(order.paymentStatus || "—") +
+        '</span><span>Тип: ' + escapeHtml(order.paymentType || "—") +
+        '</span><span>Оплачено: ' + formatMoney(order.paidAmount) +
+        '</span><span>Баланс: ' + formatMoney(order.paymentBalance) +
+        '</span><span>Доставка: ' + escapeHtml(order.deliveryType || "—") +
+        '</span><span>Знижка: ' + formatMoney(order.totalDiscount) +
+        '</span><span>Підзамовлень: ' + subOrders.length +
+        '</span><span>Розібрано: ' + formatDate(order.detailsParsedAt) + '</span></div>' +
+        '<div class="audit-suborders">' + escapeHtml(subOrderLabel) + '</div>' +
+        '<div class="audit-table-wrap"><table class="audit-table"><thead><tr><th>#</th><th>Товар / ідентифікатори</th><th>К-сть</th><th>Ціна</th><th>Ціна зі знижкою</th><th>Сума</th></tr></thead><tbody>' +
+        productRows + '</tbody></table></div>' +
+        '<div class="audit-order-foot">ID замовлення: ' + escapeHtml(order.id) +
+        ' · ID позицій: ' + products.map(product => escapeHtml(product.id ?? "—")).join(", ") + '</div>' +
+        '</details>';
+    }).join("");
+  }
+
   function renderActivity(items) {
     const container = $("#activityList");
     if (!items?.length) {
@@ -119,6 +173,7 @@
     $("#pollInterval").value = String(config.pollIntervalSeconds || 120);
     renderOrders(summaries);
     renderActivity(data?.activity || []);
+    renderFetchedOrders(data?.auditOrders || []);
   }
 
   async function refresh() {
@@ -171,6 +226,18 @@
     const panel = $("#activityPanel");
     panel.hidden = !panel.hidden;
     $("#toggleActivity").textContent = panel.hidden ? "Показати" : "Приховати";
+  });
+  $("#showActivityView").addEventListener("click", () => {
+    $("#activityView").hidden = false;
+    $("#fetchedView").hidden = true;
+    $("#showActivityView").classList.add("active");
+    $("#showFetchedView").classList.remove("active");
+  });
+  $("#showFetchedView").addEventListener("click", () => {
+    $("#activityView").hidden = true;
+    $("#fetchedView").hidden = false;
+    $("#showFetchedView").classList.add("active");
+    $("#showActivityView").classList.remove("active");
   });
   $("#saveSettings").addEventListener("click", async () => {
     const pollIntervalSeconds = Math.max(120, Number($("#pollInterval").value) || 120);
