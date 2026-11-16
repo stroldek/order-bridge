@@ -34,14 +34,16 @@
   };
 
   function rememberAuthorization(headers, requestUrl) {
-    if (!armed || !isOrdersApi(requestUrl)) return;
+    if (!isOrdersApi(requestUrl)) return;
     try {
       const normalized = new Headers(headers || {});
       const value = normalized.get("authorization");
       if (value && /^Bearer\s+\S+/i.test(value)) {
         const reused = Boolean(bearerAuthorization && bearerAuthorization === value);
+        // Keep the current token only in this page's memory. If the initial
+        // GOST request races the extension handshake, ARM can reuse it.
         bearerAuthorization = value;
-        emit("AUTH_AVAILABLE", { available: true, reused });
+        if (armed) emit("AUTH_AVAILABLE", { available: true, reused });
       }
     } catch {}
   }
