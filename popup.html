@@ -9,7 +9,7 @@
 <body class="popup-app">
 <div class="app">
   <header class="topbar">
-    <div class="brand"><span class="brand-logo-shell"><img class="brand-logo" src="assets/order-bridge-logo.webp" alt="Order Bridge"></span><span class="version">v0.2.9</span></div>
+    <div class="brand"><span class="brand-logo-shell"><img class="brand-logo" src="assets/order-bridge-logo.webp" alt="Order Bridge"></span><span class="version">v0.3.0</span></div>
     <div class="topbar-actions"><button id="themeToggle" class="theme" aria-label="Перемкнути тему"><span id="themeIcon">☾</span></button><button id="collapsePanel" class="collapse-panel" type="button" title="Згорнути">−</button></div>
     <nav class="tabs">
       <button class="tab active" data-tab="workspace">Робочий простір</button>
@@ -75,18 +75,8 @@
             <button id="toggleActivity" class="subtle">Приховати</button>
           </div>
           <div id="activityPanel">
-            <div class="journal-switch">
-              <button id="showActivityView" class="journal-tab active" type="button">Операції</button>
-              <button id="showFetchedView" class="journal-tab" type="button">Витягнуті замовлення <span id="fetchedCount">0</span></button>
-            </div>
-            <div id="activityView">
-              <div id="activityList" class="log-list"><div class="empty-state">Операцій ще немає.</div></div>
-              <p class="stage-note">Stage 2: отримання та розбір замовлень GOST. Передавання до зовнішнього ресурсу буде додано на Stage 4.</p>
-            </div>
-            <div id="fetchedView" hidden>
-              <div class="audit-caption">Збережено до 500 останніх замовлень із повною безпечною деталізацією.</div>
-              <div id="fetchedOrders" class="fetched-orders"><div class="empty-state">Деталізованих замовлень поки немає.</div></div>
-            </div>
+            <div id="activityList" class="log-list"><div class="empty-state">Операцій ще немає.</div></div>
+            <p class="stage-note">Stage 2: отримання та розбір замовлень GOST. Передавання до зовнішнього ресурсу буде додано на Stage 4.</p>
           </div>
         </section>
       </div>
@@ -113,7 +103,7 @@
       <div class="settings-card safety"><strong>Захист облікових даних</strong><p>Bearer-токен GOST використовується лише в контексті сторінки та не зберігається розширенням. У локальному сховищі залишаються ID, технічні статуси й нормалізовані товарні дані без ПІБ, телефонів, адрес і коментарів покупців.</p></div>
     </section>
   </main>
-  <footer>ORDER BRIDGE <span>·</span> STAGE 2 · v0.2.9</footer>
+  <footer>ORDER BRIDGE <span>·</span> STAGE 2 · v0.3.0</footer>
 </div>
 <script src="order-normalizer.js"></script>
 <script src="app.js"></script>
