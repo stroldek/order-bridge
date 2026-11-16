@@ -1,8 +1,10 @@
 # Order Bridge
 
-Stage 2 — GOST source connector (v0.2.3)
+Stage 2 — GOST source connector (v0.2.4)
 
 ## What changed
+- Adds a parsed-order audit view inside the operations journal: expandable order rows, payment/status metadata, sub-order counts, and a product table with SKU, quantity, unit, price, discounted price, and line total.
+- Keeps up to 500 detailed parsed orders locally for inspection. Stored audit data excludes buyer names, phone numbers, email, delivery addresses, and comments.
 - Keeps the supplied transparent logo transparent in the popup; no theme-colored or black rectangular backing is drawn behind it.
 
 - Uses the supplied Order Bridge logo in the popup header; the brand wordmark is no longer recreated with text.
@@ -16,7 +18,7 @@ Stage 2 — GOST source connector (v0.2.3)
 - Captures the GOST order list, marks existing IDs as historical on first connection, then checks for new orders every 120 seconds.
 - Fetches order detail JSON from the Next.js data endpoint for each new order.
 - Normalizes nested sub-orders and product arrays.
-- Stores only order IDs, operational metadata, and product summaries locally. Buyer name, phone, email, address, comments, and the raw full payload are not persisted.
+- Stores order IDs, operational metadata, compact product summaries, and a separate capped audit history of parsed order/product fields. Buyer name, phone, email, address, comments, and the raw full payload are not persisted.
 - Performs a full list refresh periodically to reconcile payment/status updates.
 - Calculates today's `total_price` against the fixed `Europe/Kyiv` calendar date and de-duplicates orders by ID to avoid double-counting overlapping pages.
 
