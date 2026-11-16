@@ -1,6 +1,6 @@
 # Order Bridge
 
-Stage 2 — GOST source connector (v0.2.6)
+Stage 2 — GOST source connector (v0.2.7)
 
 ## What changed
 - Persistent floating panel anchored bottom-right on GOST. It stays open when focus moves elsewhere and returns after reload; collapse it explicitly with the minus control.
@@ -25,7 +25,7 @@ Stage 2 — GOST source connector (v0.2.6)
 - Performs a full list refresh periodically to reconcile payment/status updates.
 - Calculates today's `total_price` against the fixed `Europe/Kyiv` calendar date and de-duplicates orders by ID to avoid double-counting overlapping pages.
 
-## Automated build\n\nEvery push to main validates the manifest and JavaScript, runs the normalizer tests, and uploads an installable ZIP artifact named order-bridge-v0.2.6 to the GitHub Actions run (30-day retention).\n\n## Install
+## Automated build\n\nEvery push to main validates the manifest and JavaScript, runs the normalizer tests, and uploads an installable ZIP artifact named order-bridge-v0.2.7 to the GitHub Actions run (30-day retention).\n\n## Install
 1. Download the repository ZIP from GitHub and extract it.
 2. Open chrome://extensions.
 3. Enable Developer mode.
