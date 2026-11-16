@@ -7,7 +7,8 @@ const KEYS = {
   pendingIds: "ob_pending_ids",
   summaries: "ob_order_summaries",
   auditOrders: "ob_audit_orders",
-  activity: "ob_activity"
+  activity: "ob_activity",
+  panelCollapsed: "ob_panel_collapsed"
 };
 const ALARM_NAME = "order-bridge-poll";
 const DEFAULT_STATE = {
@@ -462,6 +463,7 @@ chrome.runtime.onInstalled.addListener(async details => {
 });
 
 chrome.runtime.onStartup.addListener(() => { void createPollingAlarm(); });
+chrome.action.onClicked.addListener(async tab => { if(!tab?.id||!tab.url?.startsWith("https://gost.ua/"))return; try{await chrome.tabs.sendMessage(tab.id,{type:"OB_TOGGLE_PANEL"});}catch{} });
 chrome.alarms.onAlarm.addListener(alarm => {
   if (alarm.name === ALARM_NAME) void pollNow(false);
 });
@@ -512,8 +514,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
   if (message?.type === "OB_GET_SNAPSHOT") {
-    void readAll().then(sendResponse).catch(error => sendResponse({ ok: false, message: String(error) }));
-    return true;
+    void readAll().then(sendResponse).catch(error => sendResponse({ ok: false, message: String(error) })); return true;
   }
+  if(message?.type==="OB_GET_PANEL_STATE"){void chrome.storage.local.get(KEYS.panelCollapsed).then(v=>sendResponse({collapsed:!!v[KEYS.panelCollapsed]}));return true;}
+  if(message?.type==="OB_SET_PANEL_COLLAPSED"){void chrome.storage.local.set({[KEYS.panelCollapsed]:!!message.collapsed}).then(()=>sendResponse({ok:true})).catch(e=>sendResponse({ok:false,message:String(e)}));return true;}
   return false;
 });
