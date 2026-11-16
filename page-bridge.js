@@ -10,6 +10,9 @@
   let buildId = window.__NEXT_DATA__?.buildId || null;
   let locale = document.documentElement.lang || "uk";
   let polling = false;
+  const detailRequests = new Map();
+
+  const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
   const emit = (type, payload = {}) => {
     window.postMessage({ channel: CHANNEL, direction: "PAGE_TO_EXTENSION", type, payload }, "*");
@@ -200,15 +203,38 @@
     const path = "/_next/data/" + encodeURIComponent(buildId) + "/" +
       encodeURIComponent(locale || "uk") + "/partner-orders/" +
       encodeURIComponent(id) + ".json?id=" + encodeURIComponent(id);
-    // The Next.js detail route is requested on gost.ua itself. Do not forward
-    // the API Bearer token to this different host; use the page's same-origin session.
-    const headers = { "Accept": "application/json" };
+    // Match the request headers used by Next.js when it loads a page's JSON data.
+    // Never forward the API Bearer token to gost.ua; it belongs only to api.gost.ua.
+    const headers = { "Accept": "application/json", "x-nextjs-data": "1" };
     const payload = await requestJson(new URL(path, location.origin).href, {
       method: "GET", credentials: "same-origin", headers
     }, false);
     const order = readNextOrder(payload, id);
     if (!order) throw new Error("У відповіді Next.js не знайдено деталізацію замовлення " + id + ".");
     return order;
+  }
+
+  async function fetchOrderDetailOnce(id) {
+    const key = String(id);
+    if (detailRequests.has(key)) return detailRequests.get(key);
+    const request = (async () => {
+      let lastError;
+      for (let attempt = 0; attempt < 2; attempt += 1) {
+        try { return await fetchOrderDetail(key); }
+        catch (error) {
+          lastError = error;
+          if (attempt === 0) {
+            const currentBuildId = window.__NEXT_DATA__?.buildId;
+            if (currentBuildId) buildId = currentBuildId;
+            await delay(500);
+          }
+        }
+      }
+      throw lastError;
+    })();
+    detailRequests.set(key, request);
+    try { return await request; }
+    finally { detailRequests.delete(key); }
   }
 
   async function scanOrders({ knownIds = [], pendingIds = [], fullScan = false, baseline = false } = {}) {
@@ -257,7 +283,7 @@
       let authFailure = false;
       for (const id of ids) {
         try {
-          const order = await fetchOrderDetail(id);
+          const order = await fetchOrderDetailOnce(id);
           emit("ORDER_DETAIL", { order });
         } catch (error) {
           const isAuthFailure = Boolean(error?.auth || error?.authMissing);
@@ -309,14 +335,21 @@
       void scanOrders(payload);
     } else if (type === "FETCH_DETAILS") {
       (async () => {
-        for (const id of payload.ids || []) {
+        const ids = [...new Set((payload.ids || []).map(String).filter(Boolean))];
+        let completed = 0;
+        for (const id of ids) {
           try {
-            const order = await fetchOrderDetail(id);
+            const order = await fetchOrderDetailOnce(id);
             emit("ORDER_DETAIL", { order });
           } catch (error) {
             emit("ORDER_DETAIL_FAILED", { id, message: String(error?.message || error) });
           }
+          completed += 1;
+          if (completed < ids.length) await delay(120);
         }
+        emit("DETAIL_BATCH_COMPLETE", {
+          requested: ids.length, completed, historical: Boolean(payload.historical)
+        });
       })();
     }
   });
