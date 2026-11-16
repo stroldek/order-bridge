@@ -8,7 +8,7 @@ const KEYS = {
   summaries: "ob_order_summaries",
   auditOrders: "ob_audit_orders",
   activity: "ob_activity",
-  panelCollapsed: "ob_panel_collapsed"
+  panelCollapsed: "ob_panel_collapsed",\n  launcherPosition: "ob_launcher_position"
 };
 const ALARM_NAME = "order-bridge-poll";
 const DEFAULT_STATE = {
