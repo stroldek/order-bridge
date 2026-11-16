@@ -144,7 +144,7 @@ async function handleBaseline(payload, tabId) {
   await chrome.storage.local.set({
     [KEYS.knownIds]: ids,
     [KEYS.pendingIds]: [],
-    [KEYS.summaries]: [...uniqueSummaries.values()]
+    [KEYS.summaries]: [...uniqueSummaries.values()].map(order => ({ ...order, isNew: false }))
   });
   await patchState({
     connectionState: "connected",
@@ -185,12 +185,18 @@ async function handleBaseline(payload, tabId) {
 
 async function mergeListRows(rows) {
   if (!Array.isArray(rows) || !rows.length) return;
-  const { summaries } = await readAll();
+  const { summaries, knownIds } = await readAll();
+  const known = new Set(knownIds.map(String));
   const map = new Map(summaries.map(item => [String(item.id), item]));
   for (const row of rows) {
     if (!row?.id) continue;
     const clean = OrderBridgeNormalizer.listSummary(row);
-    map.set(clean.id, { ...(map.get(clean.id) || {}), ...clean });
+    const previous = map.get(clean.id) || {};
+    map.set(clean.id, {
+      ...previous,
+      ...clean,
+      isNew: typeof previous.isNew === "boolean" ? previous.isNew : !known.has(clean.id)
+    });
   }
   const merged = [...map.values()]
     .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
@@ -222,6 +228,7 @@ async function handleOrderDetail(order) {
   // Buyer PII, addresses, comments and the raw Next.js payload are not persisted.
   const summary = {
     id: normalized.id,
+    isNew,
     number: normalized.number,
     status: normalized.status,
     paymentStatus: normalized.paymentStatus,
