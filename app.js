@@ -206,6 +206,7 @@
   }));
   $("#themeToggle").addEventListener("click", () =>
     void setTheme(document.body.classList.contains("light") ? "dark" : "light"));
+  $("#collapsePanel").addEventListener("click",()=>{if(new URLSearchParams(location.search).get("embedded")==="1"&&window.parent!==window)window.parent.postMessage({type:"OB_PANEL_COLLAPSE"},"*");else window.close();});
   $("#connectBtn").addEventListener("click", async () => {
     const result = await sendAction("OB_CONNECT_GOST");
     if (result?.message) $("#statusText").textContent = result.message;
