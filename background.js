@@ -8,7 +8,8 @@ const KEYS = {
   summaries: "ob_order_summaries",
   auditOrders: "ob_audit_orders",
   activity: "ob_activity",
-  panelCollapsed: "ob_panel_collapsed",\n  launcherPosition: "ob_launcher_position"
+  panelCollapsed: "ob_panel_collapsed",
+  launcherPosition: "ob_launcher_position"
 };
 const ALARM_NAME = "order-bridge-poll";
 const DEFAULT_STATE = {
@@ -518,5 +519,18 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
   if(message?.type==="OB_GET_PANEL_STATE"){void chrome.storage.local.get(KEYS.panelCollapsed).then(v=>sendResponse({collapsed:!!v[KEYS.panelCollapsed]}));return true;}
   if(message?.type==="OB_SET_PANEL_COLLAPSED"){void chrome.storage.local.set({[KEYS.panelCollapsed]:!!message.collapsed}).then(()=>sendResponse({ok:true})).catch(e=>sendResponse({ok:false,message:String(e)}));return true;}
+  if (message?.type === "OB_GET_LAUNCHER_POSITION") {
+    void chrome.storage.local.get(KEYS.launcherPosition).then(v => sendResponse({ position: v[KEYS.launcherPosition] || null }));
+    return true;
+  }
+  if (message?.type === "OB_SET_LAUNCHER_POSITION") {
+    const p = message.position;
+    if (p && Number.isFinite(p.x) && Number.isFinite(p.y)) {
+      void chrome.storage.local.set({ [KEYS.launcherPosition]: { x: Math.round(p.x), y: Math.round(p.y) } })
+        .then(() => sendResponse({ ok: true }))
+        .catch(e => sendResponse({ ok: false, message: String(e) }));
+    } else sendResponse({ ok: false });
+    return true;
+  }
   return false;
 });
