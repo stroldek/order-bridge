@@ -9,7 +9,7 @@
 <body class="popup-app">
 <div class="app">
   <header class="topbar">
-    <div class="brand"><span class="brand-logo-shell"><img class="brand-logo" src="assets/order-bridge-logo.webp" alt="Order Bridge"></span><span class="version">v0.2.3</span></div>
+    <div class="brand"><span class="brand-logo-shell"><img class="brand-logo" src="assets/order-bridge-logo.webp" alt="Order Bridge"></span><span class="version">v0.2.4</span></div>
     <button id="themeToggle" class="theme" aria-label="Перемкнути тему"><span id="themeIcon">☾</span></button>
     <nav class="tabs">
       <button class="tab active" data-tab="workspace">Робочий простір</button>
@@ -75,8 +75,18 @@
             <button id="toggleActivity" class="subtle">Приховати</button>
           </div>
           <div id="activityPanel">
-            <div id="activityList" class="log-list"><div class="empty-state">Операцій ще немає.</div></div>
-            <p class="stage-note">Stage 2: отримання та розбір замовлень GOST. Передавання до зовнішнього ресурсу буде додано на Stage 4.</p>
+            <div class="journal-switch">
+              <button id="showActivityView" class="journal-tab active" type="button">Операції</button>
+              <button id="showFetchedView" class="journal-tab" type="button">Витягнуті замовлення <span id="fetchedCount">0</span></button>
+            </div>
+            <div id="activityView">
+              <div id="activityList" class="log-list"><div class="empty-state">Операцій ще немає.</div></div>
+              <p class="stage-note">Stage 2: отримання та розбір замовлень GOST. Передавання до зовнішнього ресурсу буде додано на Stage 4.</p>
+            </div>
+            <div id="fetchedView" hidden>
+              <div class="audit-caption">Збережено до 500 останніх замовлень із повною безпечною деталізацією.</div>
+              <div id="fetchedOrders" class="fetched-orders"><div class="empty-state">Деталізованих замовлень поки немає.</div></div>
+            </div>
           </div>
         </section>
       </div>
