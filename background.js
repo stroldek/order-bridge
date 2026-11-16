@@ -166,6 +166,20 @@ async function handleBaseline(payload, tabId) {
     );
   }
   await createPollingAlarm();
+
+  // Historical orders stay historical (their IDs are already in knownIds),
+  // but fetch product details so the dashboard/audit is complete.
+  const detailIds = rows
+    .map(row => String(row?.id ?? ""))
+    .filter(Boolean)
+    .slice(0, 500);
+  if (detailIds.length) {
+    await logActivity(
+      "Запущено отримання історичної деталізації",
+      "Завантажуємо товари для " + detailIds.length + " останніх історичних замовлень. Вони не рахуються новими та не передаються."
+    );
+    await sendPageCommand(tabId, "FETCH_DETAILS", { ids: detailIds, historical: true });
+  }
 }
 
 async function mergeListRows(rows) {
