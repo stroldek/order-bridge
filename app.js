@@ -173,7 +173,10 @@
     $("#pollInterval").value = String(config.pollIntervalSeconds || 120);
     renderOrders(summaries);
     renderActivity(data?.activity || []);
-    renderFetchedOrders(data?.auditOrders || []);
+    const auditOrders = data?.auditOrders?.length
+      ? data.auditOrders
+      : summaries.filter(item => item.detailsParsedAt);
+    renderFetchedOrders(auditOrders);
   }
 
   async function refresh() {
