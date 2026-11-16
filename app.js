@@ -66,25 +66,56 @@
     $("#disconnectBtn").hidden = mode === "disconnected";
   }
 
-  function renderOrders(summaries) {
-    const items = (summaries || []).slice().sort((a, b) =>
-      new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
-    ).slice(0, 6);
+  function renderOrders(summaries, auditOrders) {
+    const detailById = new Map((auditOrders || []).map(order => [String(order.id), order]));
+    const items = (summaries || []).map(summary => ({
+      ...(detailById.get(String(summary.id)) || {}),
+      ...summary,
+      products: summary.products?.length ? summary.products : (detailById.get(String(summary.id))?.products || [])
+    })).sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)).slice(0, 8);
     const container = $("#ordersList");
     if (!items.length) {
       container.innerHTML = '<div class="empty-state">Замовлень поки немає. Історія з’явиться після синхронізації з GOST.</div>';
       return;
     }
     container.innerHTML = items.map(order => {
-      const products = (order.products || []).slice(0, 3).map(product =>
+      const products = Array.isArray(order.products) ? order.products : [];
+      const preview = products.slice(0, 3).map(product =>
         '<div class="product-line"><span>' + escapeHtml(product.name || "Товар") + '</span><span>× ' + (Number(product.quantity) || 0) + '</span></div>'
       ).join("");
-      const extra = (order.products || []).length > 3 ? '<div class="product-more">Ще ' + (order.products.length - 3) + ' позицій</div>' : "";
+      const extra = products.length > 3 ? '<div class="product-more">Ще ' + (products.length - 3) + ' позицій</div>' : "";
+      const isNew = order.isNew === true;
       const parsed = Boolean(order.detailsParsedAt);
-      return '<article class="order-card">' +
-        '<div class="order-card-top"><strong>Замовлення №' + escapeHtml(order.number ?? order.id ?? "—") + '</strong><span class="order-state">' + (parsed ? 'Деталі отримано' : 'У списку GOST') + '</span></div>' +
-        '<div class="product-lines">' + (products || '<div class="product-line"><span>Деталізацію ще не завантажено</span></div>') + extra + '</div>' +
-        '<div class="order-card-bottom"><span>' + (parsed ? ((Number(order.totalQuantity) || 0) + ' шт. · ' + (Number(order.itemCount ?? (order.products || []).length) || 0) + ' позицій') : formatDate(order.createdAt)) + '</span><strong>' + formatMoney(order.totalPrice) + '</strong></div>' +
+      const productRows = products.length ? products.map((product, index) =>
+        '<tr><td>' + (index + 1) + '</td><td><strong>' + escapeHtml(product.name || "Без назви") +
+        '</strong><small>' + (product.sku ? 'SKU: ' + escapeHtml(product.sku) : 'SKU: —') +
+        (product.externalId ? ' · ID: ' + escapeHtml(product.externalId) : '') +
+        '</small></td><td>' + escapeHtml(product.quantity ?? 0) + ' ' + escapeHtml(product.unitCode || "") +
+        '</td><td>' + formatMoney(product.price) + '</td><td>' + formatMoney(product.discountPrice ?? product.originalPrice ?? product.price) +
+        '</td><td><strong>' + formatMoney(product.totalPrice) + '</strong></td></tr>'
+      ).join("") : '<tr><td colspan="6" class="audit-empty">' + (parsed ? 'У відповіді немає товарних позицій.' : 'Деталізацію товарів ще не завантажено.') + '</td></tr>';
+      const subOrders = Array.isArray(order.subOrders) ? order.subOrders : [];
+      const meta = [
+        'Статус: ' + escapeHtml(order.status || "—"),
+        'Оплата: ' + escapeHtml(order.paymentStatus || "—"),
+        'Тип оплати: ' + escapeHtml(order.paymentType || "—"),
+        'Оплачено: ' + formatMoney(order.paidAmount),
+        'Баланс: ' + formatMoney(order.paymentBalance),
+        'Доставка: ' + escapeHtml(order.deliveryType || "—"),
+        'Знижка: ' + formatMoney(order.totalDiscount),
+        'Підзамовлень: ' + subOrders.length
+      ].map(value => '<span>' + value + '</span>').join("");
+      return '<article class="order-card' + (isNew ? ' order-card-new' : '') + '">' +
+        '<div class="order-card-top"><strong>Замовлення №' + escapeHtml(order.number ?? order.id ?? "—") + '</strong>' +
+        '<span class="order-kind ' + (isNew ? 'new' : 'historical') + '">' + (isNew ? 'НОВЕ' : 'ІСТОРІЯ') + '</span></div>' +
+        '<div class="order-card-subtitle">' + formatDate(order.createdAt) + ' · ' + (parsed ? 'Деталі отримано' : 'Очікується деталізація') + '</div>' +
+        '<div class="product-lines">' + (preview || '<div class="product-line"><span>Деталізацію ще не завантажено</span></div>') + extra + '</div>' +
+        '<div class="order-card-bottom"><span>' + (parsed ? ((Number(order.totalQuantity) || 0) + ' шт. · ' + (Number(order.itemCount ?? products.length) || 0) + ' позицій') : 'Замовлення у списку GOST') + '</span><strong>' + formatMoney(order.totalPrice) + '</strong></div>' +
+        '<details class="order-detail-expand"><summary>Повна деталізація замовлення</summary>' +
+        '<div class="order-detail-meta">' + meta + '</div>' +
+        '<div class="audit-table-wrap"><table class="audit-table"><thead><tr><th>#</th><th>Товар / SKU</th><th>К-сть</th><th>Ціна</th><th>Зі знижкою</th><th>Сума</th></tr></thead><tbody>' + productRows + '</tbody></table></div>' +
+        '<div class="audit-order-foot">ID замовлення: ' + escapeHtml(order.id) +
+        (subOrders.length ? ' · Підзамовлень: ' + subOrders.length : '') + '</div></details>' +
         '</article>';
     }).join("");
   }
@@ -99,49 +130,6 @@
     }).format(date));
   }
 
-  function renderFetchedOrders(items) {
-    const container = $("#fetchedOrders");
-    const orders = (items || []).slice(0, 500);
-    $("#fetchedCount").textContent = String(orders.length);
-    if (!orders.length) {
-      container.innerHTML = '<div class="empty-state">Деталізованих замовлень поки немає. Вони з’являться після отримання нових замовлень із GOST.</div>';
-      return;
-    }
-    container.innerHTML = orders.map(order => {
-      const products = Array.isArray(order.products) ? order.products : [];
-      const productRows = products.length ? products.map((product, index) =>
-        '<tr><td>' + (index + 1) + '</td><td><strong>' + escapeHtml(product.name || "Без назви") +
-        '</strong><small>' + (product.sku ? 'SKU: ' + escapeHtml(product.sku) : 'SKU: —') +
-        (product.externalId ? ' · ID: ' + escapeHtml(product.externalId) : '') +
-        '</small></td><td>' + escapeHtml(product.quantity ?? 0) + ' ' + escapeHtml(product.unitCode || "") +
-        '</td><td>' + formatMoney(product.price) + '</td><td>' + formatMoney(product.discountPrice ?? product.originalPrice ?? product.price) +
-        '</td><td><strong>' + formatMoney(product.totalPrice) + '</strong></td></tr>'
-      ).join("") : '<tr><td colspan="6" class="audit-empty">' + (order.listOnly ? 'Замовлення є в історії GOST. Деталізація товарів ще не запитувалась.' : 'У відповіді немає товарних позицій.') + '</td></tr>';
-      const subOrders = Array.isArray(order.subOrders) ? order.subOrders : [];
-      const subOrderLabel = subOrders.length
-        ? subOrders.map((item, index) => 'Підзамовлення ' + (index + 1) + (item.number ? ' · №' + escapeHtml(item.number) : '') + ' · ' + Number(item.productCount || 0) + ' поз.').join(' / ')
-        : 'Підзамовлення: —';
-      return '<details class="fetched-order" data-order-id="' + escapeHtml(order.id) + '">' +
-        '<summary><span><strong>№' + escapeHtml(order.number ?? order.id) + '</strong><small>' +
-        formatDate(order.createdAt) + ' · ' + escapeHtml(order.status || 'Статус —') + '</small></span>' +
-        '<span class="audit-order-total">' + formatMoney(order.totalPrice) + '<small>' +
-        products.length + ' поз. · ' + escapeHtml(order.totalQuantity ?? 0) + ' шт.</small></span></summary>' +
-        '<div class="audit-order-meta"><span>Оплата: ' + escapeHtml(order.paymentStatus || "—") +
-        '</span><span>Тип: ' + escapeHtml(order.paymentType || "—") +
-        '</span><span>Оплачено: ' + formatMoney(order.paidAmount) +
-        '</span><span>Баланс: ' + formatMoney(order.paymentBalance) +
-        '</span><span>Доставка: ' + escapeHtml(order.deliveryType || "—") +
-        '</span><span>Знижка: ' + formatMoney(order.totalDiscount) +
-        '</span><span>Підзамовлень: ' + subOrders.length +
-        '</span><span>Розібрано: ' + (order.detailsParsedAt ? formatDate(order.detailsParsedAt) : 'ще не завантажено') + '</span></div>' +
-        '<div class="audit-suborders">' + escapeHtml(subOrderLabel) + '</div>' +
-        '<div class="audit-table-wrap"><table class="audit-table"><thead><tr><th>#</th><th>Товар / ідентифікатори</th><th>К-сть</th><th>Ціна</th><th>Ціна зі знижкою</th><th>Сума</th></tr></thead><tbody>' +
-        productRows + '</tbody></table></div>' +
-        '<div class="audit-order-foot">ID замовлення: ' + escapeHtml(order.id) +
-        ' · ID позицій: ' + products.map(product => escapeHtml(product.id ?? "—")).join(", ") + '</div>' +
-        '</details>';
-    }).join("");
-  }
 
   function renderActivity(items) {
     const container = $("#activityList");
@@ -174,26 +162,8 @@
     $("#intervalMetric").textContent = Number(config.pollIntervalSeconds || 120).toLocaleString("uk-UA") + " секунд";
     $("#lastCheck").textContent = formatTime(state.lastCheckAt);
     $("#pollInterval").value = String(config.pollIntervalSeconds || 120);
-    renderOrders(summaries);
+    renderOrders(summaries, data?.auditOrders || []);
     renderActivity(data?.activity || []);
-    const detailedOrders = data?.auditOrders || [];
-    const auditById = new Map(detailedOrders.map(order => [String(order.id), order]));
-    for (const summary of summaries) {
-      const id = String(summary.id ?? "");
-      if (!id || auditById.has(id)) continue;
-      auditById.set(id, {
-        ...summary,
-        products: [],
-        subOrders: [],
-        totalQuantity: 0,
-        detailsParsedAt: null,
-        listOnly: true
-      });
-    }
-    const auditOrders = [...auditById.values()].sort((a, b) =>
-      new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
-    );
-    renderFetchedOrders(auditOrders);
   }
 
   async function refresh() {
@@ -247,18 +217,6 @@
     const panel = $("#activityPanel");
     panel.hidden = !panel.hidden;
     $("#toggleActivity").textContent = panel.hidden ? "Показати" : "Приховати";
-  });
-  $("#showActivityView").addEventListener("click", () => {
-    $("#activityView").hidden = false;
-    $("#fetchedView").hidden = true;
-    $("#showActivityView").classList.add("active");
-    $("#showFetchedView").classList.remove("active");
-  });
-  $("#showFetchedView").addEventListener("click", () => {
-    $("#activityView").hidden = true;
-    $("#fetchedView").hidden = false;
-    $("#showFetchedView").classList.add("active");
-    $("#showActivityView").classList.remove("active");
   });
   $("#saveSettings").addEventListener("click", async () => {
     const pollIntervalSeconds = Math.max(120, Number($("#pollInterval").value) || 120);
