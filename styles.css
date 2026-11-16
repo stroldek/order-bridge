@@ -151,3 +151,35 @@ body.light .log-list{border-top-color:#aebdad}
 body.light .log-item{border-bottom-color:#bdcbbc}
 body.light .metric-value,body.light .small-card strong,body.light .order-card-bottom strong{color:#18271c}
 body.light .empty-state{border-color:#aebdad;background:#e8eee6}
+
+
+/* Order parsing audit view inside the operations journal. */
+.journal-switch{display:flex;gap:6px;margin:0 0 9px}
+.journal-tab{border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--muted);padding:6px 9px;font:inherit;font-size:10px;cursor:pointer}
+.journal-tab.active{background:var(--soft);color:var(--text);border-color:var(--line);font-weight:700}
+.journal-tab span{display:inline-grid;place-items:center;min-width:17px;height:17px;margin-left:3px;padding:0 4px;border-radius:6px;background:var(--panel2);font-size:9px}
+.audit-caption{font-size:9px;color:var(--muted);line-height:1.35;margin:0 0 7px}
+.fetched-orders{display:grid;gap:7px;max-height:274px;overflow:auto;overscroll-behavior:contain;padding-right:2px}
+.fetched-order{border:1px solid var(--line);border-radius:9px;background:var(--panel);overflow:hidden}
+.fetched-order summary{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 10px;cursor:pointer;list-style:none}
+.fetched-order summary::-webkit-details-marker{display:none}
+.fetched-order summary:after{content:"＋";color:var(--muted);font-size:12px;margin-left:3px}
+.fetched-order[open] summary:after{content:"−"}
+.fetched-order summary strong{font-size:10px}
+.fetched-order summary small{display:block;color:var(--muted);font-size:8px;margin-top:3px}
+.audit-order-total{text-align:right;font-size:10px;font-weight:700;white-space:nowrap}
+.audit-order-meta{display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:0 10px 8px;font-size:8px;color:var(--muted)}
+.audit-suborders{padding:6px 10px;background:var(--panel2);font-size:8px;color:var(--muted);line-height:1.4}
+.audit-table-wrap{overflow-x:auto;max-width:100%}
+.audit-table{width:100%;border-collapse:collapse;font-size:8px;white-space:nowrap}
+.audit-table th,.audit-table td{padding:6px 7px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.audit-table th{color:var(--muted);font-weight:650;background:var(--panel2)}
+.audit-table td strong{font-size:8px;white-space:normal;display:block;min-width:90px;max-width:145px}
+.audit-table td small{display:block;color:var(--muted);font-size:7px;margin-top:3px;white-space:normal}
+.audit-empty{text-align:center!important;color:var(--muted);padding:12px!important}
+.audit-order-foot{padding:7px 10px;font-size:7px;color:var(--muted);overflow-wrap:anywhere}
+.popup-app .fetched-orders{max-height:274px}
+.popup-app .audit-table th,.popup-app .audit-table td{padding:5px 6px}
+body.light .journal-tab{background:#edf2eb;border-color:#adbdad;color:#405347}
+body.light .journal-tab.active{background:#d0dfd0;color:#1a291e}
+body.light .fetched-order{box-shadow:0 1px 5px rgba(25,45,30,.06)}
