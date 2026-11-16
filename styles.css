@@ -79,6 +79,8 @@ footer span{padding:0 5px}
 .popup-app .tabs{display:flex;align-items:center;gap:4px;margin:0 0 0 auto;flex:0 0 auto}
 .popup-app .tab{padding:9px 11px;font-size:11px;white-space:nowrap}
 .popup-app .theme{width:32px;height:32px;flex:0 0 32px;font-size:16px}
+.popup-app .topbar-actions{display:flex;align-items:center;gap:6px;flex:0 0 auto}
+.popup-app .collapse-panel{width:32px;height:32px;border:1px solid var(--line);border-radius:9px;background:var(--panel);color:var(--muted);font-size:20px;cursor:pointer}
 .popup-app main{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:14px 0 16px}
 .popup-app .view.active{display:block}
 .popup-app .status-row{align-items:center;gap:14px;margin-bottom:14px}
@@ -183,3 +185,7 @@ body.light .empty-state{border-color:#aebdad;background:#e8eee6}
 body.light .journal-tab{background:#edf2eb;border-color:#adbdad;color:#405347}
 body.light .journal-tab.active{background:#d0dfd0;color:#1a291e}
 body.light .fetched-order{box-shadow:0 1px 5px rgba(25,45,30,.06)}
+
+html,body,.popup-app,.popup-app main,.popup-app .dashboard-panel .orders-list,.popup-app .dashboard-panel .log-list,.popup-app .fetched-orders,.popup-app .audit-table-wrap{scrollbar-width:none!important;-ms-overflow-style:none!important}
+html::-webkit-scrollbar,body::-webkit-scrollbar,.popup-app *::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
+.popup-app .fetched-orders,.popup-app .dashboard-panel .orders-list,.popup-app .dashboard-panel .log-list,.popup-app main{overflow-y:auto;overscroll-behavior:contain}
