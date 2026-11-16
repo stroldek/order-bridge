@@ -38,6 +38,10 @@ assert.equal(parsed.totalQuantity, 4);
 assert.equal(parsed.products.reduce((sum, item) => sum + item.totalPrice, 0), 801);
 assert.equal(parsed.totalPrice, 701, "Order total must not be silently replaced by sum of product lines.");
 assert.equal(parsed.totalDiscount, 100);
+assert.equal(parsed.subOrders.length, 2);
+assert.equal(parsed.subOrders[0].productCount, 2);
+assert.equal(parsed.products[0].subOrderId, "sub-1");
+assert.equal(parsed.products[2].subOrderId, "sub-2");
 
 process.env.TZ = "America/Los_Angeles";
 const revenue = todayRevenue([
