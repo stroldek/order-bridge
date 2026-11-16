@@ -27,6 +27,7 @@
       const lines = Array.isArray(subOrder?.products) ? subOrder.products : [];
       for (const product of lines) {
         products.push({
+          subOrderId: subOrder?.id ?? null,
           id: product?.id ?? null,
           externalId: product?.external_id ?? null,
           sku: product?.sku ?? null,
@@ -75,6 +76,12 @@
         comment: delivery.comment ?? null
       },
       subOrderCount: subOrders.length,
+      subOrders: subOrders.map(subOrder => ({
+        id: subOrder?.id ?? null,
+        number: subOrder?.number ?? null,
+        status: subOrder?.status ?? null,
+        productCount: Array.isArray(subOrder?.products) ? subOrder.products.length : 0
+      })),
       products,
       productLineCount: products.length,
       totalQuantity
