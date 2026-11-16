@@ -23,7 +23,8 @@ const DEFAULT_STATE = {
   lastCheckAt: null,
   lastSuccessAt: null,
   lastError: null,
-  pollCounter: 0
+  pollCounter: 0,
+  historicalDetailBackfillPending: false
 };
 const DEFAULT_CONFIG = { pollIntervalSeconds: 120, source: "gost", historyMode: "baseline_only" };
 let pageEventQueue = Promise.resolve();
@@ -350,6 +351,25 @@ async function handlePageEvent(eventType, payload, tabId) {
       await createPollingAlarm();
       await logActivity("Авторизацію GOST відновлено", "Виявлено новий авторизований запит.");
     }
+
+    // One-time migration for users who already completed the baseline in an older build.
+    const refreshed = await readAll();
+    if (refreshed.state.connectionState === "connected" &&
+        refreshed.state.baselineCompleted &&
+        refreshed.state.historicalDetailBackfillPending) {
+      const missingDetails = refreshed.summaries
+        .filter(order => order?.id && !order.detailsParsedAt)
+        .map(order => String(order.id))
+        .slice(0, 500);
+      await patchState({ historicalDetailBackfillPending: false });
+      if (missingDetails.length) {
+        await logActivity(
+          "Запущено дозавантаження історичної деталізації",
+          "Завантажуємо товари для " + missingDetails.length + " замовлень, що були отримані попередньою версією."
+        );
+        await sendPageCommand(tabId, "FETCH_DETAILS", { ids: missingDetails, historical: true });
+      }
+    }
     return;
   }
 
@@ -473,6 +493,8 @@ chrome.runtime.onInstalled.addListener(async details => {
   }
   if (details.reason === "install") {
     await logActivity("Order Bridge встановлено", "Версія 0.2.0 · Stage 2.");
+  } else if (details.reason === "update") {
+    await patchState({ historicalDetailBackfillPending: true });
   }
   await createPollingAlarm();
 });
