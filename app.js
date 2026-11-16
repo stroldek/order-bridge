@@ -67,10 +67,12 @@
   }
 
   function renderOrders(summaries) {
-    const items = (summaries || []).filter(item => item.detailsParsedAt).slice(0, 6);
+    const items = (summaries || []).slice().sort((a, b) =>
+      new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
+    ).slice(0, 6);
     const container = $("#ordersList");
     if (!items.length) {
-      container.innerHTML = '<div class="empty-state">Нових замовлень поки немає. Історичні замовлення не імпортуються автоматично.</div>';
+      container.innerHTML = '<div class="empty-state">Замовлень поки немає. Історія з’явиться після синхронізації з GOST.</div>';
       return;
     }
     container.innerHTML = items.map(order => {
@@ -78,10 +80,11 @@
         '<div class="product-line"><span>' + escapeHtml(product.name || "Товар") + '</span><span>× ' + (Number(product.quantity) || 0) + '</span></div>'
       ).join("");
       const extra = (order.products || []).length > 3 ? '<div class="product-more">Ще ' + (order.products.length - 3) + ' позицій</div>' : "";
+      const parsed = Boolean(order.detailsParsedAt);
       return '<article class="order-card">' +
-        '<div class="order-card-top"><strong>Замовлення №' + escapeHtml(order.number ?? "—") + '</strong><span class="order-state">Отримано</span></div>' +
-        '<div class="product-lines">' + products + extra + '</div>' +
-        '<div class="order-card-bottom"><span>' + (Number(order.totalQuantity) || 0) + ' шт. · ' + (Number(order.itemCount) || 0) + ' позицій</span><strong>' + formatMoney(order.totalPrice) + '</strong></div>' +
+        '<div class="order-card-top"><strong>Замовлення №' + escapeHtml(order.number ?? order.id ?? "—") + '</strong><span class="order-state">' + (parsed ? 'Деталі отримано' : 'У списку GOST') + '</span></div>' +
+        '<div class="product-lines">' + (products || '<div class="product-line"><span>Деталізацію ще не завантажено</span></div>') + extra + '</div>' +
+        '<div class="order-card-bottom"><span>' + (parsed ? ((Number(order.totalQuantity) || 0) + ' шт. · ' + (Number(order.itemCount ?? (order.products || []).length) || 0) + ' позицій') : formatDate(order.createdAt)) + '</span><strong>' + formatMoney(order.totalPrice) + '</strong></div>' +
         '</article>';
     }).join("");
   }
@@ -113,7 +116,7 @@
         '</small></td><td>' + escapeHtml(product.quantity ?? 0) + ' ' + escapeHtml(product.unitCode || "") +
         '</td><td>' + formatMoney(product.price) + '</td><td>' + formatMoney(product.discountPrice ?? product.originalPrice ?? product.price) +
         '</td><td><strong>' + formatMoney(product.totalPrice) + '</strong></td></tr>'
-      ).join("") : '<tr><td colspan="6" class="audit-empty">У відповіді немає товарних позицій.</td></tr>';
+      ).join("") : '<tr><td colspan="6" class="audit-empty">' + (order.listOnly ? 'Замовлення є в історії GOST. Деталізація товарів ще не запитувалась.' : 'У відповіді немає товарних позицій.') + '</td></tr>';
       const subOrders = Array.isArray(order.subOrders) ? order.subOrders : [];
       const subOrderLabel = subOrders.length
         ? subOrders.map((item, index) => 'Підзамовлення ' + (index + 1) + (item.number ? ' · №' + escapeHtml(item.number) : '') + ' · ' + Number(item.productCount || 0) + ' поз.').join(' / ')
@@ -173,9 +176,23 @@
     $("#pollInterval").value = String(config.pollIntervalSeconds || 120);
     renderOrders(summaries);
     renderActivity(data?.activity || []);
-    const auditOrders = data?.auditOrders?.length
-      ? data.auditOrders
-      : summaries.filter(item => item.detailsParsedAt);
+    const detailedOrders = data?.auditOrders || [];
+    const auditById = new Map(detailedOrders.map(order => [String(order.id), order]));
+    for (const summary of summaries) {
+      const id = String(summary.id ?? "");
+      if (!id || auditById.has(id)) continue;
+      auditById.set(id, {
+        ...summary,
+        products: [],
+        subOrders: [],
+        totalQuantity: 0,
+        detailsParsedAt: null,
+        listOnly: true
+      });
+    }
+    const auditOrders = [...auditById.values()].sort((a, b) =>
+      new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
+    );
     renderFetchedOrders(auditOrders);
   }
 
