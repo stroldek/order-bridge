@@ -1,25 +1,7 @@
-(() => {
-  "use strict";
-  const CHANNEL = "ORDER_BRIDGE_PAGE_CHANNEL";
-  function sendToPage(type, payload = {}) {
-    window.postMessage({ channel: CHANNEL, direction: "EXTENSION_TO_PAGE", type, payload }, "*");
-  }
-  window.addEventListener("message", event => {
-    if (event.source !== window) return;
-    const data = event.data;
-    if (!data || data.channel !== CHANNEL || data.direction !== "PAGE_TO_EXTENSION") return;
-    chrome.runtime.sendMessage({
-      type: "OB_PAGE_EVENT",
-      eventType: data.type,
-      payload: data.payload || {}
-    }).catch(() => {});
-  });
-  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message?.type === "OB_PAGE_COMMAND") {
-      sendToPage(message.command, message.payload || {});
-      sendResponse?.({ ok: true });
-    }
-    return false;
-  });
-  chrome.runtime.sendMessage({ type: "OB_CONTENT_READY", pageUrl: location.href }).catch(() => {});
-})();
+(()=>{"use strict";const CHANNEL="ORDER_BRIDGE_PAGE_CHANNEL";let host,shadow,collapsed=false;
+function pageCommand(type,payload={}){window.postMessage({channel:CHANNEL,direction:"EXTENSION_TO_PAGE",type,payload},"*");}
+function setCollapsed(v,persist=true){collapsed=!!v;if(!shadow)return;const frame=shadow.querySelector("iframe"),launcher=shadow.querySelector(".ob-launcher");if(frame)frame.style.display=collapsed?"none":"block";if(launcher)launcher.style.display=collapsed?"flex":"none";if(persist)chrome.runtime.sendMessage({type:"OB_SET_PANEL_COLLAPSED",collapsed}).catch(()=>{});}
+function createPanel(){if(host||!document.documentElement)return;host=document.createElement("div");host.id="order-bridge-floating-root";host.style.cssText="all:initial;position:fixed;right:18px;bottom:18px;z-index:2147483647;width:680px;height:580px;pointer-events:none";shadow=host.attachShadow({mode:"closed"});const css=document.createElement("style");css.textContent='.ob-frame{display:block;width:680px;height:580px;border:0;border-radius:16px;background:transparent;box-shadow:0 12px 44px #0005;pointer-events:auto;overflow:hidden}.ob-launcher{display:none;align-items:center;gap:9px;height:44px;padding:0 15px;border:1px solid #ffffff2e;border-radius:13px;background:#18251e;color:#edf4ee;font:600 13px Inter,system-ui,sans-serif;box-shadow:0 8px 28px #0005;cursor:pointer;pointer-events:auto}.ob-launcher span:first-child{font-size:21px}@media(max-width:720px){.ob-frame{width:calc(100vw - 20px);height:min(580px,calc(100vh - 36px))}}@media(max-height:620px){.ob-frame{height:calc(100vh - 36px)}}';shadow.append(css);const frame=document.createElement("iframe");frame.className="ob-frame";frame.title="Order Bridge";frame.src=chrome.runtime.getURL("popup.html?embedded=1");const launcher=document.createElement("button");launcher.className="ob-launcher";launcher.type="button";launcher.innerHTML="<span>👻</span><span>Order Bridge</span><span>Розгорнути</span>";launcher.addEventListener("click",()=>setCollapsed(false));shadow.append(frame,launcher);document.documentElement.append(host);window.addEventListener("message",e=>{if(e.source===frame.contentWindow&&e.data?.type==="OB_PANEL_COLLAPSE")setCollapsed(true);});chrome.runtime.sendMessage({type:"OB_GET_PANEL_STATE"}).then(v=>setCollapsed(!!v?.collapsed,false)).catch(()=>setCollapsed(false,false));}
+window.addEventListener("message",e=>{if(e.source!==window)return;const d=e.data;if(!d||d.channel!==CHANNEL||d.direction!=="PAGE_TO_EXTENSION")return;chrome.runtime.sendMessage({type:"OB_PAGE_EVENT",eventType:d.type,payload:d.payload||{}}).catch(()=>{});});
+chrome.runtime.onMessage.addListener(m=>{if(m?.type==="OB_PAGE_COMMAND")pageCommand(m.command,m.payload||{});if(m?.type==="OB_TOGGLE_PANEL")setCollapsed(!collapsed);});
+createPanel();chrome.runtime.sendMessage({type:"OB_CONTENT_READY",pageUrl:location.href}).catch(()=>{});})();
