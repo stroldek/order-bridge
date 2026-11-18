@@ -9,7 +9,7 @@
 <body class="popup-app">
 <div class="app">
   <header class="topbar">
-    <div class="brand"><span class="brand-logo-shell"><img class="brand-logo" src="assets/order-bridge-logo.webp" alt="Order Bridge"></span><span class="version">v0.3.0</span></div>
+    <div class="brand"><span class="brand-logo-shell"><img class="brand-logo" src="assets/order-bridge-logo.webp" alt="Order Bridge"></span><span class="version">v0.3.1</span></div>
     <div class="topbar-actions"><button id="themeToggle" class="theme" aria-label="Перемкнути тему"><span id="themeIcon">☾</span></button><button id="collapsePanel" class="collapse-panel" type="button" title="Згорнути">−</button></div>
     <nav class="tabs">
       <button class="tab active" data-tab="workspace">Робочий простір</button>
@@ -63,7 +63,7 @@
         <section class="dashboard-panel">
           <div class="section-heading log-heading">
             <div><div class="eyebrow">ДАНІ GOST</div><h2>Останні замовлення</h2></div>
-            <button id="checkNowBtn" class="subtle">Перевірити зараз</button>
+            <div class="heading-actions"><button id="toggleOrders" class="subtle">Приховати</button><button id="checkNowBtn" class="subtle">Перевірити зараз</button></div>
           </div>
           <div id="ordersList" class="orders-list">
             <div class="empty-state">Після підключення тут з'являться нові замовлення та їхні товари.</div>
