@@ -219,14 +219,14 @@
     if (detailRequests.has(key)) return detailRequests.get(key);
     const request = (async () => {
       let lastError;
-      for (let attempt = 0; attempt < 2; attempt += 1) {
+      for (let attempt = 0; attempt < 3; attempt += 1) {
         try { return await fetchOrderDetail(key); }
         catch (error) {
           lastError = error;
-          if (attempt === 0) {
+          if (attempt < 2) {
             const currentBuildId = window.__NEXT_DATA__?.buildId;
             if (currentBuildId) buildId = currentBuildId;
-            await delay(500);
+            await delay(attempt === 0 ? 700 : 1600);
           }
         }
       }
@@ -281,7 +281,7 @@
       });
 
       let authFailure = false;
-      for (const id of ids) {
+      for (const id of [...ids].slice(0, 30)) {
         try {
           const order = await fetchOrderDetailOnce(id);
           emit("ORDER_DETAIL", { order });
@@ -335,7 +335,7 @@
       void scanOrders(payload);
     } else if (type === "FETCH_DETAILS") {
       (async () => {
-        const ids = [...new Set((payload.ids || []).map(String).filter(Boolean))];
+        const ids = [...new Set((payload.ids || []).map(String).filter(Boolean))].slice(0, 30);
         let completed = 0;
         for (const id of ids) {
           try {
