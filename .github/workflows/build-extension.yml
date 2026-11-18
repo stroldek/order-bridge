@@ -30,21 +30,25 @@ jobs:
           node --check content.js
           node --check order-normalizer.js
           node --check app.js
+          node --check xlsx-export.js
 
       - name: Run normalizer tests
         run: node tests/normalizer.test.js
 
+      - name: Run Excel export tests
+        run: node tests/xlsx-export.test.js
+
       - name: Package extension
         run: |
           mkdir -p dist
-          zip -r dist/order-bridge-v0.3.1.zip \
+          zip -r dist/order-bridge-v0.3.2.zip \
             manifest.json background.js page-bridge.js content.js \
-            order-normalizer.js popup.html app.js styles.css \
+            order-normalizer.js xlsx-export.js popup.html app.js styles.css \
             assets/order-bridge-logo.webp README.md START_HERE.html
 
       - name: Upload installable extension ZIP
         uses: actions/upload-artifact@v4
         with:
-          name: order-bridge-v0.3.1
-          path: dist/order-bridge-v0.3.1.zip
+          name: order-bridge-v0.3.2
+          path: dist/order-bridge-v0.3.2.zip
           retention-days: 30
