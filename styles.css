@@ -295,3 +295,8 @@ body.light .popup-app .order-kind.new{color:#286a3b;background:#dcefe0}
 /* v0.3.1: collapsible latest-orders section. */
 .popup-app .heading-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .popup-app #ordersList[hidden],.popup-app #activityPanel[hidden],.popup-app #details[hidden]{display:none!important}
+
+/* v0.3.2: local Excel export controls. */
+.popup-app .export-notice{font-size:10px;color:var(--muted);line-height:1.4;min-height:0;margin:-4px 0 7px}
+.popup-app .heading-actions .subtle{white-space:nowrap}
+.popup-app #exportExcelBtn:disabled{opacity:.45;cursor:not-allowed}
