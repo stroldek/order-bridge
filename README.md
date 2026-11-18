@@ -1,8 +1,10 @@
 # Order Bridge
 
-Stage 2 — GOST source connector (v0.3.0)
+Stage 2 — GOST source connector + Excel export (v0.3.2)
 
 ## What changed
+- Adds a local Excel export (.xlsx) with two sheets: “Замовлення” (one row per order) and “Товари” (one row per product). Exports all locally stored orders, not only the eight shown in the dashboard. The workbook marks new vs. historical orders and shows whether details have been loaded.
+- The workbook is generated in the browser; no order data is uploaded to a third-party service during export. Customer contact details and delivery addresses are not included.
 - Persistent floating panel anchored bottom-right on GOST. It stays open when focus moves elsewhere and returns after reload; collapse it explicitly with the minus control.
 - Injected only on `https://gost.ua/*`; never shown on other sites. Toolbar icon toggles it on GOST.
 - Scrollbar tracks hidden while mouse-wheel and two-finger touchpad scrolling remain available.\n- The collapsed launcher can be dragged anywhere on screen; its position is saved across page reloads. Re-expanding always restores the full panel to the bottom-right corner.
@@ -12,7 +14,7 @@ Stage 2 — GOST source connector (v0.3.0)
 
 - Uses the supplied Order Bridge logo in the popup header; the brand wordmark is no longer recreated with text.
 - Removes fixed-source and historical-order mode controls from settings. The source remains GOST and the initial ID baseline always protects existing orders.
-- The operations log has its own collapsible panel, matching the metrics panel.
+- The operations log and latest-orders list have independent collapsible panels.
 - Light theme uses a muted green-gray surface palette with stronger card and control separation.
 - The extension UI is now a real Chrome toolbar popup (popup.html), not a tab opened by the extension.
 - Uses one familiar ghost emoji (👻) in every state, with state-specific motion/marks.
@@ -25,7 +27,7 @@ Stage 2 — GOST source connector (v0.3.0)
 - Performs a full list refresh periodically to reconcile payment/status updates.
 - Calculates today's `total_price` against the fixed `Europe/Kyiv` calendar date and de-duplicates orders by ID to avoid double-counting overlapping pages.
 
-## Automated build\n\nEvery push to main validates the manifest and JavaScript, runs the normalizer tests, and uploads an installable ZIP artifact named order-bridge-v0.3.0 to the GitHub Actions run (30-day retention).\n\n## Install
+## Automated build\n\nEvery push to main validates the manifest and JavaScript, runs the normalizer tests, and uploads an installable ZIP artifact named order-bridge-v0.3.2 to the GitHub Actions run (30-day retention).\n\n## Install
 1. Download the repository ZIP from GitHub and extract it.
 2. Open chrome://extensions.
 3. Enable Developer mode.
@@ -35,7 +37,7 @@ Stage 2 — GOST source connector (v0.3.0)
 7. Open the GOST Замовлення page and refresh it.
 
 ## Stage 2 limitations
-- This stage reads and normalizes GOST orders only; it does not send orders to external systems yet.
+- The Excel export is a local file export. Automatic delivery to an external system is not connected yet.
 - The GOST tab must remain open for page-context authenticated requests. If the page is closed or the GOST session expires, the popup reports that state and polling pauses.
 - Chrome alarms target a 120-second interval but may be delayed by browser scheduling.
 - Order details are fetched through the observed Next.js data route. If GOST changes that route/build structure, the bridge reports a parsing error rather than silently inventing data.
