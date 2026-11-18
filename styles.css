@@ -291,3 +291,7 @@ body.light .popup-app .order-kind.new{color:#286a3b;background:#dcefe0}
 .popup-app .order-detail-expand .audit-table td strong{font-size:10px;min-width:110px;max-width:180px}
 .popup-app .order-detail-expand .audit-table td small{font-size:9px}
 .popup-app .order-detail-expand .audit-order-foot{font-size:9px}
+
+/* v0.3.1: collapsible latest-orders section. */
+.popup-app .heading-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.popup-app #ordersList[hidden],.popup-app #activityPanel[hidden],.popup-app #details[hidden]{display:none!important}
