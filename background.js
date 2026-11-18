@@ -143,7 +143,7 @@ async function handleBaseline(payload, tabId) {
   }
   await chrome.storage.local.set({
     [KEYS.knownIds]: ids,
-    [KEYS.pendingIds]: [],
+    [KEYS.pendingIds]: ids.slice(0, 500),
     [KEYS.summaries]: [...uniqueSummaries.values()].map(order => ({ ...order, isNew: false }))
   });
   await patchState({
@@ -179,7 +179,7 @@ async function handleBaseline(payload, tabId) {
       "Запущено отримання історичної деталізації",
       "Завантажуємо товари для " + detailIds.length + " останніх історичних замовлень. Вони не рахуються новими та не передаються."
     );
-    await sendPageCommand(tabId, "FETCH_DETAILS", { ids: detailIds, historical: true });
+    await sendPageCommand(tabId, "FETCH_DETAILS", { ids: detailIds.slice(0, 30), historical: true });
   }
 }
 
@@ -204,13 +204,13 @@ async function mergeListRows(rows) {
   await chrome.storage.local.set({ [KEYS.summaries]: merged });
 }
 
-async function addPendingIds(ids) {
+async function addPendingIds(ids, allowKnown = false) {
   const { pendingIds, knownIds } = await readAll();
   const known = new Set(knownIds.map(String));
   const pending = new Set(pendingIds.map(String));
   for (const id of ids || []) {
     const value = String(id);
-    if (value && !known.has(value)) pending.add(value);
+    if (value && (allowKnown || !known.has(value))) pending.add(value);
   }
   await chrome.storage.local.set({ [KEYS.pendingIds]: [...pending] });
 }
@@ -419,7 +419,7 @@ async function handlePageEvent(eventType, payload, tabId) {
   }
 
   if (eventType === "ORDER_DETAIL_FAILED") {
-    await addPendingIds([payload.id]);
+    await addPendingIds([payload.id], true);
     await patchState({
       errorCount: state.errorCount + 1,
       lastError: payload.message || "Не вдалося отримати деталізацію замовлення."
@@ -561,6 +561,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     void readAll().then(sendResponse).catch(error => sendResponse({ ok: false, message: String(error) })); return true;
   }
   if(message?.type==="OB_GET_PANEL_STATE"){void chrome.storage.local.get(KEYS.panelCollapsed).then(v=>sendResponse({collapsed:!!v[KEYS.panelCollapsed]}));return true;}
+  if(message?.type==="OB_GET_ORDERS_COLLAPSED"){void chrome.storage.local.get("ob_orders_collapsed").then(v=>sendResponse({collapsed:!!v.ob_orders_collapsed}));return true;}
+  if(message?.type==="OB_SET_ORDERS_COLLAPSED"){void chrome.storage.local.set({ob_orders_collapsed:!!message.collapsed}).then(()=>sendResponse({ok:true})).catch(e=>sendResponse({ok:false,message:String(e)}));return true;}
   if(message?.type==="OB_SET_PANEL_COLLAPSED"){void chrome.storage.local.set({[KEYS.panelCollapsed]:!!message.collapsed}).then(()=>sendResponse({ok:true})).catch(e=>sendResponse({ok:false,message:String(e)}));return true;}
   if (message?.type === "OB_GET_LAUNCHER_POSITION") {
     void chrome.storage.local.get(KEYS.launcherPosition).then(v => sendResponse({ position: v[KEYS.launcherPosition] || null }));
