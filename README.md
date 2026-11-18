@@ -1,9 +1,12 @@
 # Order Bridge
 
-Stage 2 — GOST source connector + Excel export (v0.3.2)
+Stage 2 — GOST source connector + Excel export (v0.3.3)
 
 ## What changed
-- Adds a local Excel export (.xlsx) with two sheets: “Замовлення” (one row per order) and “Товари” (one row per product). Exports all locally stored orders, not only the eight shown in the dashboard. The workbook marks new vs. historical orders and shows whether details have been loaded.
+- The Excel export opens on a human-readable “Картки замовлень” sheet. Every order has a visual block with status, payment/delivery metadata, all available product lines, unit prices, discounted prices, line totals, overall amount, discount, delivery, prepayment, paid amount, balance, and sub-orders.
+- The workbook also contains a filterable “Реєстр” and normalized “Товарні позиції” sheet for future integrations. Orders whose product details are not loaded are visibly marked.
+- The workbook is created locally. Buyer contact details, delivery addresses, and comments are not included.
+- Adds a local Excel export (.xlsx) with a human-readable order-card sheet, a filterable order register, and normalized product-line data. Exports all locally stored orders, not only the eight shown in the dashboard. The workbook marks new vs. historical orders and shows whether details have been loaded.
 - The workbook is generated in the browser; no order data is uploaded to a third-party service during export. Customer contact details and delivery addresses are not included.
 - Persistent floating panel anchored bottom-right on GOST. It stays open when focus moves elsewhere and returns after reload; collapse it explicitly with the minus control.
 - Injected only on `https://gost.ua/*`; never shown on other sites. Toolbar icon toggles it on GOST.
@@ -27,7 +30,7 @@ Stage 2 — GOST source connector + Excel export (v0.3.2)
 - Performs a full list refresh periodically to reconcile payment/status updates.
 - Calculates today's `total_price` against the fixed `Europe/Kyiv` calendar date and de-duplicates orders by ID to avoid double-counting overlapping pages.
 
-## Automated build\n\nEvery push to main validates the manifest and JavaScript, runs the normalizer tests, and uploads an installable ZIP artifact named order-bridge-v0.3.2 to the GitHub Actions run (30-day retention).\n\n## Install
+## Automated build\n\nEvery push to main validates the manifest and JavaScript, runs the normalizer tests, and uploads an installable ZIP artifact named order-bridge-v0.3.3 to the GitHub Actions run (30-day retention).\n\n## Install
 1. Download the repository ZIP from GitHub and extract it.
 2. Open chrome://extensions.
 3. Enable Developer mode.
