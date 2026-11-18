@@ -184,6 +184,7 @@
     $("#lastCheck").textContent = formatTime(state.lastCheckAt);
     $("#pollInterval").value = String(config.pollIntervalSeconds || 120);
     renderOrders(summaries, data?.auditOrders || []);
+    $("#exportExcelBtn").disabled = summaries.length === 0;
     renderActivity(data?.activity || []);
   }
 
@@ -223,6 +224,26 @@
   $("#disconnectBtn").addEventListener("click", async () => {
     await sendAction("OB_DISCONNECT_GOST");
     await refresh();
+  });
+  $("#exportExcelBtn").addEventListener("click", async () => {
+    if (!isExtension || !window.OrderBridgeExcelExport) {
+      $("#exportNotice").textContent = "Експорт доступний у встановленому розширенні Chrome.";
+      return;
+    }
+    try {
+      const latest = await sendAction("OB_GET_SNAPSHOT");
+      const data = latest?.state ? latest : snapshot;
+      if (!data || !(data.summaries || []).length) {
+        $("#exportNotice").textContent = "Немає замовлень для експорту. Спочатку синхронізуйте GOST.";
+        return;
+      }
+      const stats = window.OrderBridgeExcelExport.download(data);
+      $("#exportNotice").textContent = "Експортовано: " + stats.orders + " замовлень · " +
+        stats.products + " товарних позицій · деталізація є у " +
+        stats.detailedOrders + " замовленнях.";
+    } catch (error) {
+      $("#exportNotice").textContent = "Не вдалося сформувати Excel: " + String(error?.message || error);
+    }
   });
   $("#checkNowBtn").addEventListener("click", async () => {
     const result = await sendAction("OB_CHECK_NOW");
