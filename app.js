@@ -19,6 +19,27 @@
       "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
     })[character]);
   }
+
+  async function loadOrdersVisibility() {
+    let collapsed = false;
+    try {
+      if (isExtension) {
+        const saved = await chrome.runtime.sendMessage({ type: "OB_GET_ORDERS_COLLAPSED" });
+        collapsed = Boolean(saved?.collapsed);
+      } else collapsed = localStorage.getItem("ob-orders-collapsed") === "1";
+    } catch {}
+    $("#ordersList").hidden = collapsed;
+    $("#toggleOrders").textContent = collapsed ? "Показати" : "Приховати";
+  }
+  async function setOrdersVisibility(collapsed) {
+    $("#ordersList").hidden = collapsed;
+    $("#toggleOrders").textContent = collapsed ? "Показати" : "Приховати";
+    try {
+      if (isExtension) await chrome.runtime.sendMessage({ type: "OB_SET_ORDERS_COLLAPSED", collapsed });
+      else localStorage.setItem("ob-orders-collapsed", collapsed ? "1" : "0");
+    } catch {}
+  }
+
   async function loadTheme() {
     let theme = "dark";
     try {
@@ -213,6 +234,9 @@
     details.hidden = !details.hidden;
     $("#toggleDetails").textContent = details.hidden ? "Показати" : "Приховати";
   });
+  $("#toggleOrders").addEventListener("click", () => {
+    void setOrdersVisibility(!$("#ordersList").hidden);
+  });
   $("#toggleActivity").addEventListener("click", () => {
     const panel = $("#activityPanel");
     panel.hidden = !panel.hidden;
@@ -228,6 +252,7 @@
   });
 
   void loadTheme();
+  void loadOrdersVisibility();
   void refresh();
   if (isExtension) {
     chrome.storage.onChanged.addListener((changes, areaName) => {
