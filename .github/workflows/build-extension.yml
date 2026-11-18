@@ -41,7 +41,7 @@ jobs:
       - name: Package extension
         run: |
           mkdir -p dist
-          zip -r dist/order-bridge-v0.3.2.zip \
+          zip -r dist/order-bridge-v0.3.3.zip \
             manifest.json background.js page-bridge.js content.js \
             order-normalizer.js xlsx-export.js popup.html app.js styles.css \
             assets/order-bridge-logo.webp README.md START_HERE.html
@@ -49,6 +49,6 @@ jobs:
       - name: Upload installable extension ZIP
         uses: actions/upload-artifact@v4
         with:
-          name: order-bridge-v0.3.2
-          path: dist/order-bridge-v0.3.2.zip
+          name: order-bridge-v0.3.3
+          path: dist/order-bridge-v0.3.3.zip
           retention-days: 30
