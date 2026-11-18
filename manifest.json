@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Order Bridge",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Monitors GOST orders and prepares normalized order data for external integrations.",
   "minimum_chrome_version": "111",
   "permissions": [
@@ -16,8 +16,24 @@
   "background": {
     "service_worker": "background.js"
   },
-  "action": {"default_title": "Показати / згорнути Order Bridge"},
-  "web_accessible_resources": [{"resources":["popup.html","styles.css","app.js","order-normalizer.js","assets/order-bridge-logo.webp"],"matches":["https://gost.ua/*"]}],
+  "action": {
+    "default_title": "Показати / згорнути Order Bridge"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "popup.html",
+        "styles.css",
+        "app.js",
+        "order-normalizer.js",
+        "assets/order-bridge-logo.webp",
+        "xlsx-export.js"
+      ],
+      "matches": [
+        "https://gost.ua/*"
+      ]
+    }
+  ],
   "content_scripts": [
     {
       "matches": [
